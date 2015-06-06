@@ -186,16 +186,6 @@ public class GameScreen extends Screen {
                     me.handleAction(MOVE_LEFT);
                     bluetoothModule.sendMessage(String.valueOf(MOVE_LEFT));
                     isMoving = true;
-
-//                    if ( Math.abs(me.getCenterX()-ME_BOUNDARY) < MIDDLE_BOUNDARY ) {
-//                        me.handleAction(MOVE_LEFT);
-//                        bluetoothModule.sendMessage(String.valueOf(MOVE_LEFT));
-//                        isMoving = true;
-//                    }
-//                    else {
-//                        me.handleAction(STOP_BOTH);
-//                    }
-
                 }
                 // Move right
                 else if (inBounds(event, screenWidth / 2, pauseHeight, screenWidth / 2, screenHeight - pauseHeight)) {
@@ -203,15 +193,6 @@ public class GameScreen extends Screen {
                     me.handleAction(MOVE_RIGHT);
                     bluetoothModule.sendMessage(String.valueOf(MOVE_RIGHT));
                     isMoving = true;
-
-//                    if ( Math.abs(me.getCenterX()-ME_BOUNDARY) < MIDDLE_BOUNDARY ) {
-//                        me.handleAction(MOVE_RIGHT);
-//                        bluetoothModule.sendMessage(String.valueOf(MOVE_RIGHT));
-//                        isMoving = true;
-//                    }
-//                    else {
-//                        me.handleAction(STOP_BOTH);
-//                    }
                 }
             }
 
