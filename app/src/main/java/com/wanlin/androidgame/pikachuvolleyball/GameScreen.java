@@ -330,21 +330,6 @@ public class GameScreen extends Screen {
     }
 
     private void updateGameOver(List<Input.TouchEvent> touchEvents) {
-        int len = touchEvents.size();
-        for (int i = 0; i < len; i++) {
-            Input.TouchEvent event = touchEvents.get(i);
-            if (event.type == Input.TouchEvent.TOUCH_UP) {
-                if (event.x > 300 && event.x < 980 && event.y > 100
-                        && event.y < 500) {
-                    nullify();
-
-                    game.setCurScreenType(PikachuVolleyball.TYPE_SCREEN_MENU);
-                    game.setScreen(new MainMenuScreen(game));
-                    return;
-                }
-            }
-        }
-
     }
 
     @Override
@@ -460,12 +445,11 @@ public class GameScreen extends Screen {
 
     @Override
     public void backButton() {
-        pause();
+        if (musicIsPlaying) {
+            Assets.shortKimisa.dispose();
+        }
         if (state == GameState.GameOver) {
             game.setScreen(new GameScreen(game));
-        }
-        else {
-            game.setScreen(new MainMenuScreen(game));
         }
     }
 
