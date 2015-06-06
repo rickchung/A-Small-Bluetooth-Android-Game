@@ -1,4 +1,4 @@
-package com.pikachu.volleyball;
+package com.wanlin.androidgame.pikachuvolleyball;
 
 import android.bluetooth.BluetoothDevice;
 import android.graphics.Color;

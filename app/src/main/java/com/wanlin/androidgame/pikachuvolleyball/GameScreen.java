@@ -1,9 +1,9 @@
-package com.pikachu.volleyball;
+package com.wanlin.androidgame.pikachuvolleyball;
 
 import android.graphics.Color;
 import android.graphics.Paint;
 
-import com.com.androidgame.rick.bluetooth.BluetoothModule;
+import com.rick.androidgame.bluetooth.BluetoothModule;
 import com.kilobolt.framework.Game;
 import com.kilobolt.framework.Graphics;
 import com.kilobolt.framework.Image;

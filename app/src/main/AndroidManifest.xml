@@ -19,7 +19,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.pikachu.volleyball.PikachuVolleyball"
+            android:name="com.wanlin.androidgame.pikachuvolleyball.PikachuVolleyball"
             android:configChanges="keyboard|keyboardHidden|orientation"
             android:label="SampleGame"
             android:screenOrientation="landscape" >

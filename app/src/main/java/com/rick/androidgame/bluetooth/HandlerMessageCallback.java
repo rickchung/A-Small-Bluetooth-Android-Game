@@ -1,4 +1,4 @@
-package com.com.androidgame.rick.bluetooth;
+package com.rick.androidgame.bluetooth;
 
 import android.os.Message;
 

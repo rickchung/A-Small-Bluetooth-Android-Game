@@ -15,16 +15,16 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ListView;
 
-import com.com.androidgame.rick.bluetooth.BluetoothModule;
-import com.com.androidgame.rick.bluetooth.HandlerMessageCallback;
+import com.rick.androidgame.bluetooth.BluetoothModule;
+import com.rick.androidgame.bluetooth.HandlerMessageCallback;
 import com.kilobolt.framework.Audio;
 import com.kilobolt.framework.FileIO;
 import com.kilobolt.framework.Game;
 import com.kilobolt.framework.Graphics;
 import com.kilobolt.framework.Input;
 import com.kilobolt.framework.Screen;
-import com.pikachu.volleyball.GameScreen;
-import com.pikachu.volleyball.MainMenuScreen;
+import com.wanlin.androidgame.pikachuvolleyball.GameScreen;
+import com.wanlin.androidgame.pikachuvolleyball.MainMenuScreen;
 
 import java.util.ArrayList;
 

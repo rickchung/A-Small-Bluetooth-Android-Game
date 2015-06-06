@@ -1,4 +1,4 @@
-package com.pikachu.volleyball;
+package com.wanlin.androidgame.pikachuvolleyball;
 
 import com.kilobolt.framework.Screen;
 import com.kilobolt.framework.implementation.AndroidGame;
