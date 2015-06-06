@@ -1,14 +1,14 @@
 package com.kilobolt.framework.implementation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.kilobolt.framework.Pool;
 import com.kilobolt.framework.Input.TouchEvent;
+import com.kilobolt.framework.Pool;
 import com.kilobolt.framework.Pool.PoolObjectFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SingleTouchHandler implements TouchHandler {
     boolean isTouched;

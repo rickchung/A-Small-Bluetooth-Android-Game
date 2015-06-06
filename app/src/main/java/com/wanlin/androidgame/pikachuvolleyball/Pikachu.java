@@ -1,21 +1,24 @@
 package com.wanlin.androidgame.pikachuvolleyball;
 
 import android.graphics.Point;
+import android.util.Log;
 
 /**
  * Created by wanlin on 15/6/5.
  */
 public class Pikachu {
+    final String LOG_TAG = "Pikachu";
     final int JUMP_SPEED = -15;
-    int MOVE_SPEED = 5;
+    float MOVE_SPEED = 5.0f;
 
     private final int PAUSE = 0;
     private final int MOVE_LEFT = 1;
     private final int MOVE_RIGHT = 2;
-    private final int STOP_LEFT = 3;
-    private final int STOP_RIGHT = 4;
+    public final int STOP_LEFT = 3;
+    public final int STOP_RIGHT = 4;
+    public static final int STOP_BOTH = 123;
     private final int JUMP = 5;
-    private final int NUM_MOVING_SLOTS = 100;
+    private final float NUM_MOVING_SLOTS = 900.0f;
 
     private boolean ducked = false;
     private boolean jumped = false;
@@ -36,6 +39,7 @@ public class Pikachu {
         centerX = x;
         centerY = y;
         this.screenDensityRatio = sizePoint.x / NUM_MOVING_SLOTS;
+        Log.d(LOG_TAG, "Ratio info: " + screenDensityRatio + " screen size: " + sizePoint.x);
     }
 
     public void update() {
@@ -94,17 +98,20 @@ public class Pikachu {
     }
 
     private void stop() {
-        if (isMovingRight() == false && isMovingLeft() == false) {
-            speedX = 0;
-        }
-
-        if (isMovingRight() == false && isMovingLeft() == true) {
-            moveLeft();
-        }
-
-        if (isMovingRight() == true && isMovingLeft() == false) {
-            moveRight();
-        }
+        setMovingLeft(false);
+        setMovingRight(false);
+        speedX = 0;
+//        if (isMovingRight() == false && isMovingLeft() == false) {
+//            speedX = 0;
+//        }
+//
+//        if (isMovingRight() == false && isMovingLeft() == true) {
+//            moveLeft();
+//        }
+//
+//        if (isMovingRight() == true && isMovingLeft() == false) {
+//            moveRight();
+//        }
     }
 
     private void pause(){
@@ -160,6 +167,9 @@ public class Pikachu {
                 break;
             case STOP_RIGHT:
                 stopRight();
+                break;
+            case STOP_BOTH:
+                stop();
                 break;
             case JUMP:
                 jump();

@@ -20,13 +20,17 @@ public class GameScreen extends Screen {
     enum GameState {
         Ready, Running, Paused, GameOver
     }
+    private static final String LOG_TAG = "GameScreen";
 
     GameState state = GameState.Ready;
     private static Pikachu me, enemy;
     private Image characterA, characterB, volleyball, currentSpriteA, currentSpriteB;
-    private static int screenWidth = 1280;
-    private static int screenHeight = 720;
+    private static int screenWidth;
+    private static int screenHeight;
     private static int pauseHeight = 300;
+    public static int MIDDLE_BOUNDARY;
+    public static int ME_BOUNDARY;
+    public static int ENEMY_BOUNDARY;
     private Animation meAnim;
     private Animation enemyAnim;
     private int score = 0;
@@ -38,14 +42,13 @@ public class GameScreen extends Screen {
     public final int MOVE_RIGHT = 2;
     public final int STOP_LEFT = 3;
     public final int STOP_RIGHT = 4;
+    public final int STOP_BOTH = 123;
     public final int PAUSE = 10;
     private final int JUMP = 5;
     private boolean isMoving = false;
+    private boolean isHolding = false;
 
     private BluetoothModule bluetoothModule;
-
-    // Variable Setup
-    // You would create game objects here.
 
     int targetScore = 15;
     Paint paint;
@@ -56,8 +59,10 @@ public class GameScreen extends Screen {
 
         // Set screen size
         Point screenSizePoint = ((PikachuVolleyball) game).getSizePoint();
+        //((PikachuVolleyball)game).getWindowManager().getDefaultDisplay().getRealSize(screenSizePoint);
         screenWidth = screenSizePoint.x;
         screenHeight = screenSizePoint.y;
+        MIDDLE_BOUNDARY = screenWidth / 2;
 
         // Density
         densityRatio = ((PikachuVolleyball) game).getResources().getDisplayMetrics().density;
@@ -75,6 +80,9 @@ public class GameScreen extends Screen {
             meAnim.addFrame(characterA, 50);
             enemyAnim = new Animation();
             enemyAnim.addFrame(characterB, 50);
+
+            ENEMY_BOUNDARY = 0;
+            ME_BOUNDARY = screenWidth;
         }
         else {
             characterA = Assets.characterB;
@@ -88,6 +96,9 @@ public class GameScreen extends Screen {
             meAnim.addFrame(characterB, 50);
             enemyAnim = new Animation();
             enemyAnim.addFrame(characterA, 50);
+
+            ENEMY_BOUNDARY = screenWidth;
+            ME_BOUNDARY = 0;
         }
 
         // current frame
@@ -140,17 +151,24 @@ public class GameScreen extends Screen {
     }
 
     private void updateRunning(List<Input.TouchEvent> touchEvents, float deltaTime) {
-
-        //This is identical to the update() method from our Unit 2/3 game.
-
-        // handle me update
         int len = touchEvents.size();
+
+        if (isMoving && Math.abs(me.getCenterX()-ME_BOUNDARY) > MIDDLE_BOUNDARY) {
+            isMoving = false;
+            me.handleAction(STOP_LEFT);
+            bluetoothModule.sendMessage(String.valueOf(STOP_LEFT));
+            me.handleAction(STOP_RIGHT);
+            bluetoothModule.sendMessage(String.valueOf(STOP_RIGHT));
+        }
 
         for (int i = 0; i < len; i++) {
             Input.TouchEvent event = touchEvents.get(i);
 
             // me moveX
             if (event.type == Input.TouchEvent.TOUCH_DOWN) {
+                isHolding = true;
+
+                // Pause
                 if (inBounds(event, 0, 0, screenWidth, pauseHeight)) {
                     if (isMoving) {
                         isMoving = false;
@@ -162,24 +180,45 @@ public class GameScreen extends Screen {
                     bluetoothModule.sendMessage(String.valueOf(STOP_MOVING));
                     pause();
                 }
-
+                // Movd left
                 if (inBounds(event, 0, pauseHeight, screenWidth / 2, screenHeight - pauseHeight)) {
-                    // Move left;
+                    // Move left
                     me.handleAction(MOVE_LEFT);
                     bluetoothModule.sendMessage(String.valueOf(MOVE_LEFT));
                     isMoving = true;
 
+//                    if ( Math.abs(me.getCenterX()-ME_BOUNDARY) < MIDDLE_BOUNDARY ) {
+//                        me.handleAction(MOVE_LEFT);
+//                        bluetoothModule.sendMessage(String.valueOf(MOVE_LEFT));
+//                        isMoving = true;
+//                    }
+//                    else {
+//                        me.handleAction(STOP_BOTH);
+//                    }
+
                 }
+                // Move right
                 else if (inBounds(event, screenWidth / 2, pauseHeight, screenWidth / 2, screenHeight - pauseHeight)) {
-                    // Move right.
+                    // Move right
                     me.handleAction(MOVE_RIGHT);
                     bluetoothModule.sendMessage(String.valueOf(MOVE_RIGHT));
                     isMoving = true;
+
+//                    if ( Math.abs(me.getCenterX()-ME_BOUNDARY) < MIDDLE_BOUNDARY ) {
+//                        me.handleAction(MOVE_RIGHT);
+//                        bluetoothModule.sendMessage(String.valueOf(MOVE_RIGHT));
+//                        isMoving = true;
+//                    }
+//                    else {
+//                        me.handleAction(STOP_BOTH);
+//                    }
                 }
             }
 
             // me stop moveX
             if (event.type == Input.TouchEvent.TOUCH_UP) {
+                isHolding = false;
+
                 if (isMoving) {
                     isMoving = false;
                     me.handleAction(STOP_LEFT);
