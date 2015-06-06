@@ -53,7 +53,7 @@ public class SingleTouchHandler implements TouchHandler {
                 isTouched = false;
                 break;
             }
-            
+
             touchEvent.x = touchX = (int)(event.getX() * scaleX);
             touchEvent.y = touchY = (int)(event.getY() * scaleY);
             touchEventsBuffer.add(touchEvent);                        

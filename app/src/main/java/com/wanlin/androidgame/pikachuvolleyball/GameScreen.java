@@ -20,12 +20,14 @@ public class GameScreen extends Screen {
     enum GameState {
         Ready, Running, Paused, GameOver
     }
+
     private static final String LOG_TAG = "GameScreen";
 
     GameState state = GameState.Ready;
     private static Pikachu me, enemy;
     private Image characterA, characterB, characterAA, characterBB, characterBM, characterAM,
             volleyball, currentSpriteA, currentSpriteB;
+    private Image cJumpA, cJumpAM, cJumpAA, cJumpB, cJumpBM, cJumpBB;
     private static int screenWidth;
     private static int screenHeight;
     private static int pauseHeight = 300;
@@ -33,8 +35,8 @@ public class GameScreen extends Screen {
     public static int MIDDLE_BOUNDARY_OTHER;
     public static int ME_BOUNDARY;
     public static int ENEMY_BOUNDARY;
-    private Animation meAnim;
-    private Animation enemyAnim;
+    private Animation meAnim, meJumpAnim;
+    private Animation enemyAnim, enemyJumpAnim;
     private int score = 0;
 
     public static final int STOP_MOVING = 0;
@@ -50,6 +52,7 @@ public class GameScreen extends Screen {
     private boolean isMoving = false;
     private boolean isHolding = false;
     private final int ANI_RATE = 150;
+    private int touchDownY;
 
     private BluetoothModule bluetoothModule;
 
@@ -70,29 +73,50 @@ public class GameScreen extends Screen {
         densityRatio = ((PikachuVolleyball) game).getResources().getDisplayMetrics().density;
 
         // Initialize game objects here
-        if ( ((PikachuVolleyball) game).isHost() ) {
-            characterA = Assets.characterA;
-            characterAA = Assets.characterAA;
-            characterAM = Assets.characterAM;
-            characterB = Assets.characterB;
-            characterBB = Assets.characterBB;
-            characterBM = Assets.characterBM;
+        characterA = Assets.characterA;
+        characterAA = Assets.characterAA;
+        characterAM = Assets.characterAM;
+        characterB = Assets.characterB;
+        characterBB = Assets.characterBB;
+        characterBM = Assets.characterBM;
+        cJumpA = Assets.cJumpA;
+        cJumpAM = Assets.cJumpAM;
+        cJumpAA = Assets.cJumpAA;
+        cJumpB = Assets.cJumpB;
+        cJumpBM = Assets.cJumpBM;
+        cJumpBB = Assets.cJumpBB;
 
+        if (((PikachuVolleyball) game).isHost()) {
             // I'm at the right
-            me = new Pikachu(screenWidth - characterA.getWidth(), screenHeight - characterA.getHeight()-130, screenSizePoint);
-            enemy = new Pikachu(0, screenHeight - characterB.getHeight()-130, screenSizePoint);
+            me = new Pikachu(screenWidth - characterA.getWidth(), screenHeight - characterA.getHeight() - 130, screenSizePoint);
+            enemy = new Pikachu(0, screenHeight - characterB.getHeight() - 130, screenSizePoint);
 
-            // create an animation and add two characterA and characterB into the frame
+            // Normal frame for me
             meAnim = new Animation();
             Image[] meFrames = {characterA, characterAM, characterAA, characterAM};
             for (Image i : meFrames) {
                 meAnim.addFrame(i, ANI_RATE);
             }
+            // Jump frame for me
+            meJumpAnim = new Animation();
+            Image[] meJumpFrames = {cJumpA, cJumpAM, cJumpAA, cJumpAM};
+            for (Image i : meJumpFrames) {
+                meJumpAnim.addFrame(i, ANI_RATE);
+            }
+
+            // Normal frame for enemy
             enemyAnim = new Animation();
             Image[] enFrames = {characterB, characterBM, characterBB, characterBM};
             for (Image i : enFrames) {
                 enemyAnim.addFrame(i, ANI_RATE);
             }
+            // Jump frame for enemy
+            enemyJumpAnim = new Animation();
+            Image[] enemyJumpFrames = {cJumpB, cJumpBM, cJumpBB, cJumpBM};
+            for (Image i : enemyJumpFrames) {
+                enemyJumpAnim.addFrame(i, ANI_RATE);
+            }
+
 
             // Set boundaries
             ENEMY_BOUNDARY = 0;
@@ -100,16 +124,9 @@ public class GameScreen extends Screen {
             MIDDLE_BOUNDARY = screenWidth / 2 - 20;
         }
         else {
-            characterA = Assets.characterA;
-            characterAA = Assets.characterAA;
-            characterAM = Assets.characterAM;
-            characterB = Assets.characterB;
-            characterBB = Assets.characterBB;
-            characterBM = Assets.characterBM;
-
             // I'm at the left
-            me = new Pikachu(0, screenHeight - characterB.getHeight()-130, screenSizePoint);
-            enemy = new Pikachu(screenWidth - characterA.getWidth(), screenHeight - characterA.getHeight()-130, screenSizePoint);
+            me = new Pikachu(0, screenHeight - characterB.getHeight() - 130, screenSizePoint);
+            enemy = new Pikachu(screenWidth - characterA.getWidth(), screenHeight - characterA.getHeight() - 130, screenSizePoint);
 
             // create an animation and add two characterA and characterB into the frame
             meAnim = new Animation();
@@ -117,10 +134,22 @@ public class GameScreen extends Screen {
             for (Image i : meFrames) {
                 meAnim.addFrame(i, ANI_RATE);
             }
+            // Jump frame for me
+            meJumpAnim = new Animation();
+            Image[] meJumpFrames = {cJumpB, cJumpBM, cJumpBB, cJumpBM};
+            for (Image i : meJumpFrames) {
+                meJumpAnim.addFrame(i, ANI_RATE);
+            }
+
             enemyAnim = new Animation();
             Image[] enFrames = {characterA, characterAM, characterAA, characterAM};
             for (Image i : enFrames) {
                 enemyAnim.addFrame(i, ANI_RATE);
+            }
+            enemyJumpAnim = new Animation();
+            Image[] enemyJumpFrames = {cJumpA, cJumpAM, cJumpAA, cJumpAM};
+            for (Image i : enemyJumpFrames) {
+                enemyJumpAnim.addFrame(i, ANI_RATE);
             }
 
             ENEMY_BOUNDARY = screenWidth;
@@ -150,11 +179,6 @@ public class GameScreen extends Screen {
     public void update(float deltaTime) {
         List<Input.TouchEvent> touchEvents = game.getInput().getTouchEvents();
 
-        // We have four separate update methods in this example.
-        // Depending on the state of the game, we call different update methods.
-        // Refer to Unit 3's code. We did a similar thing without separating the
-        // update methods.
-
         if (state == GameState.Ready)
             updateReady(touchEvents);
         if (state == GameState.Running)
@@ -180,8 +204,7 @@ public class GameScreen extends Screen {
 
     private void updateRunning(List<Input.TouchEvent> touchEvents, float deltaTime) {
         int len = touchEvents.size();
-
-        if (isMoving && Math.abs(me.getCenterX()-ME_BOUNDARY) > MIDDLE_BOUNDARY) {
+        if (isMoving && Math.abs(me.getCenterX() - ME_BOUNDARY) > MIDDLE_BOUNDARY) {
             isMoving = false;
             me.handleAction(STOP_LEFT);
             bluetoothModule.sendMessage(String.valueOf(STOP_LEFT));
@@ -222,6 +245,9 @@ public class GameScreen extends Screen {
                     bluetoothModule.sendMessage(String.valueOf(MOVE_RIGHT));
                     isMoving = true;
                 }
+
+                // For jump
+                touchDownY = event.y;
             }
 
             // ========== TOUCH UP Event ==========
@@ -235,18 +261,14 @@ public class GameScreen extends Screen {
                     me.handleAction(STOP_RIGHT);
                     bluetoothModule.sendMessage(String.valueOf(STOP_RIGHT));
                 }
-//                if (inBounds(event, 0, pauseHeight, screenWidth / 2, screenHeight - pauseHeight)) {
-//                    // Stop moving left.
-//                    me.handleAction(STOP_LEFT);
-//                    bluetoothModule.sendMessage(String.valueOf(STOP_LEFT));
-//                }
-//                else if (inBounds(event, screenWidth / 2, pauseHeight, screenWidth / 2, screenHeight - pauseHeight)) {
-//                    // Stop moving right.
-//                    me.handleAction(STOP_RIGHT);
-//                    bluetoothModule.sendMessage(String.valueOf(STOP_RIGHT));
-//                }
             }
-//                    me.handleAction(JUMP);
+
+            if (touchDownY != 0 && event.type == Input.TouchEvent.TOUCH_DRAGGED) {
+                if (event.y - touchDownY < 0) {
+                    me.handleAction(JUMP);
+                    bluetoothModule.sendMessage(String.valueOf(JUMP));
+                }
+            }
         }
 
         // handle enemy update
@@ -261,16 +283,14 @@ public class GameScreen extends Screen {
             state = GameState.GameOver;
         }
 
-
-        // 3. Call individual update() methods here.
-        // This is where all the game updates happen.
-        // For example, robot.update();
-
+        // Me update
         me.update();
-        currentSpriteA = meAnim.getImage();
-
+        if (me.isJumped()) currentSpriteA = meJumpAnim.getImage();
+        else currentSpriteA = meAnim.getImage();
+        // Enemy update
         enemy.update();
-        currentSpriteB = enemyAnim.getImage();
+        if (enemy.isJumped()) currentSpriteB = enemyJumpAnim.getImage();
+        else currentSpriteB = enemyAnim.getImage();
 
         animate();
     }
@@ -350,7 +370,7 @@ public class GameScreen extends Screen {
         Graphics g = game.getGraphics();
 
         g.drawARGB(155, 0, 0, 0);
-        g.drawString("Tap to Start!", screenWidth/2, screenHeight/2, paint);
+        g.drawString("Tap to Start!", screenWidth / 2, screenHeight / 2, paint);
         // g.drawString("Tap to Start!", 640, 300, paint);
 
     }
@@ -378,8 +398,7 @@ public class GameScreen extends Screen {
 
     }
 
-    private boolean inBounds(Input.TouchEvent event, int x, int y, int width,
-                             int height) {
+    private boolean inBounds(Input.TouchEvent event, int x, int y, int width, int height) {
         if (event.x > x && event.x < x + width - 1 && event.y > y
                 && event.y < y + height - 1)
             return true;
@@ -389,12 +408,14 @@ public class GameScreen extends Screen {
 
     public void animate() {
         meAnim.update(10);
+        meJumpAnim.update(30);
         enemyAnim.update(10);
+        enemyJumpAnim.update(30);
     }
 
     @Override
     public void pause() {
-        if (state == GameState.Running){
+        if (state == GameState.Running) {
             me.handleAction(PAUSE);
             enemy.handleAction(PAUSE);
             state = GameState.Paused;

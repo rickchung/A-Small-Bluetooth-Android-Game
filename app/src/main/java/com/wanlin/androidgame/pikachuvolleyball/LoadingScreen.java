@@ -49,9 +49,15 @@ public class LoadingScreen extends Screen {
         Assets.characterA = g.newImage("meImage.png", Graphics.ImageFormat.ARGB4444);
         Assets.characterAA = g.newImage("meImage1.png", Graphics.ImageFormat.ARGB4444);
         Assets.characterAM = g.newImage("meImage1.5.png", Graphics.ImageFormat.ARGB4444);
+        Assets.cJumpA = g.newImage("meJump.png", Graphics.ImageFormat.ARGB4444);
+        Assets.cJumpAM = g.newImage("meJump1.5.png", Graphics.ImageFormat.ARGB4444);
+        Assets.cJumpAA = g.newImage("meJump1.png", Graphics.ImageFormat.ARGB4444);
         Assets.characterB = g.newImage("enemyImage.png", Graphics.ImageFormat.ARGB4444);
         Assets.characterBB = g.newImage("enemyImage1.png", Graphics.ImageFormat.ARGB4444);
         Assets.characterBM = g.newImage("enemyImage1.5.png", Graphics.ImageFormat.ARGB4444);
+        Assets.cJumpB = g.newImage("enemyJump.png", Graphics.ImageFormat.ARGB4444);
+        Assets.cJumpBM = g.newImage("enemyJump1.5.png", Graphics.ImageFormat.ARGB4444);
+        Assets.cJumpBB = g.newImage("enemyJump1.png", Graphics.ImageFormat.ARGB4444);
 
         // set button image
         Assets.startButton = g.newImage("start-button.png", Graphics.ImageFormat.RGB565);

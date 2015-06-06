@@ -8,7 +8,7 @@ import android.util.Log;
  */
 public class Pikachu {
     final String LOG_TAG = "Pikachu";
-    float JUMP_SPEED = -15.0f;
+    float JUMP_SPEED = -60.0f;
     float MOVE_SPEED = 5.0f;
 
     private final int PAUSE = 0;
@@ -30,6 +30,7 @@ public class Pikachu {
 
     private int centerX;
     private int centerY;
+    private int jumpStartY;
 
     private float screenDensityRatioX;
     private float screenDensityRatioY;
@@ -52,11 +53,16 @@ public class Pikachu {
             centerX += speedX;
         }
 
-//        // Updates Y Position
-//        centerY += speedY;
-//
-//        // Handles Jumping
-//        speedY += 1;
+        if (isJumped()) {
+            // Updates Y Position
+            centerY += speedY;
+            speedY += 4;
+        }
+
+        if (centerY >= jumpStartY) {
+            jumped = false;
+            speedY = 0;
+        }
 //
 //        if (speedY > 3){
 //            jumped = true;
@@ -70,6 +76,7 @@ public class Pikachu {
 
     private void jump() {
         if (jumped == false) {
+            jumpStartY = centerY;
             speedY = JUMP_SPEED * screenDensityRatioY;
             jumped = true;
         }
