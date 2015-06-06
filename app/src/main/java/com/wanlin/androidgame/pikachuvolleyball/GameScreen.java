@@ -32,7 +32,6 @@ public class GameScreen extends Screen {
     private static int screenHeight;
     private static int pauseHeight = 300;
     public static int MIDDLE_BOUNDARY;
-    public static int MIDDLE_BOUNDARY_OTHER;
     public static int ME_BOUNDARY;
     public static int ENEMY_BOUNDARY;
     private Animation meAnim, meJumpAnim;
@@ -53,6 +52,7 @@ public class GameScreen extends Screen {
     private boolean isHolding = false;
     private final int ANI_RATE = 150;
     private int touchDownY;
+    private boolean musicIsPlaying = false;
 
     private BluetoothModule bluetoothModule;
 
@@ -88,8 +88,17 @@ public class GameScreen extends Screen {
 
         if (((PikachuVolleyball) game).isHost()) {
             // I'm at the right
-            me = new Pikachu(screenWidth - characterA.getWidth(), screenHeight - characterA.getHeight() - 130, screenSizePoint);
-            enemy = new Pikachu(0, screenHeight - characterB.getHeight() - 130, screenSizePoint);
+
+            // Set boundaries
+            ENEMY_BOUNDARY = 0;
+            ME_BOUNDARY = screenWidth;
+            MIDDLE_BOUNDARY = screenWidth / 2;
+
+            me = new Pikachu(screenWidth - characterA.getWidth(),
+                    screenHeight - characterA.getHeight() - 130, screenSizePoint,
+                    ME_BOUNDARY, MIDDLE_BOUNDARY);
+            enemy = new Pikachu(0, screenHeight - characterB.getHeight() - 130, screenSizePoint,
+                    ENEMY_BOUNDARY, MIDDLE_BOUNDARY);
 
             // Normal frame for me
             meAnim = new Animation();
@@ -116,17 +125,19 @@ public class GameScreen extends Screen {
             for (Image i : enemyJumpFrames) {
                 enemyJumpAnim.addFrame(i, ANI_RATE);
             }
-
-
-            // Set boundaries
-            ENEMY_BOUNDARY = 0;
-            ME_BOUNDARY = screenWidth;
-            MIDDLE_BOUNDARY = screenWidth / 2 - 20;
         }
         else {
             // I'm at the left
-            me = new Pikachu(0, screenHeight - characterB.getHeight() - 130, screenSizePoint);
-            enemy = new Pikachu(screenWidth - characterA.getWidth(), screenHeight - characterA.getHeight() - 130, screenSizePoint);
+
+            // Set bound
+            ME_BOUNDARY = 0;
+            ENEMY_BOUNDARY = screenWidth;
+            MIDDLE_BOUNDARY = screenWidth / 2 - (characterA.getWidth());
+
+            me = new Pikachu(0, screenHeight - characterB.getHeight() - 130, screenSizePoint,
+                    ME_BOUNDARY, MIDDLE_BOUNDARY);
+            enemy = new Pikachu(screenWidth - characterA.getWidth(), screenHeight - characterA.getHeight() - 130, screenSizePoint,
+                    ENEMY_BOUNDARY, MIDDLE_BOUNDARY);
 
             // create an animation and add two characterA and characterB into the frame
             meAnim = new Animation();
@@ -151,11 +162,6 @@ public class GameScreen extends Screen {
             for (Image i : enemyJumpFrames) {
                 enemyJumpAnim.addFrame(i, ANI_RATE);
             }
-
-            ENEMY_BOUNDARY = screenWidth;
-            ME_BOUNDARY = 0;
-            // Set middle boundary
-            MIDDLE_BOUNDARY = screenWidth / 2 - (characterA.getWidth());
         }
 
         // current frame
@@ -271,16 +277,24 @@ public class GameScreen extends Screen {
             }
         }
 
-        // handle enemy update
-        // ...
-
-//        enemy.handleAction(MOVE_RIGHT);
-
-        // if (bluetooth.getAction == MOVE_RIGHT)
-
         // check score
         if (score == targetScore) {
             state = GameState.GameOver;
+        }
+
+        // MUSIC!
+        if (Math.abs(me.getCenterX()-enemy.getCenterX()) < 280) {
+            if (!musicIsPlaying) {
+                musicIsPlaying = true;
+                Assets.shortKimisa = game.getAudio().createMusic("short_kimisa.mp3");
+                Assets.shortKimisa.play();
+            }
+        }
+        else {
+            if (musicIsPlaying) {
+                musicIsPlaying = false;
+                Assets.shortKimisa.dispose();
+            }
         }
 
         // Me update
