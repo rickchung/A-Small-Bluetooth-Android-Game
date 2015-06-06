@@ -44,6 +44,8 @@ public class LoadingScreen extends Screen {
         // set background image
         Assets.gameBgImage = g.newImage("gameBgImage.png", Graphics.ImageFormat.RGB565, screenWidth, screenHeight);
         Assets.menuBgImage = g.newImage("menuBgImage.jpg", Graphics.ImageFormat.RGB565, screenSizePoint.x, screenSizePoint.y);
+        Assets.gameoverImage = g.newImage("gameBgImage1.png", Graphics.ImageFormat.RGB565, screenWidth, screenHeight);
+        Assets.loserImage = g.newImage("gameBgImage2.png", Graphics.ImageFormat.RGB565, screenWidth, screenHeight);
 
         // set pikachu character image
         Assets.characterA = g.newImage("meImage.png", Graphics.ImageFormat.ARGB4444);
@@ -68,11 +70,6 @@ public class LoadingScreen extends Screen {
         Assets.bgMusic = game.getAudio().createMusic("kimisa.mp3");
         Assets.bgMusic.setLooping(true);
         Assets.bgMusic.setVolume(0.85f);
-
-        // set short-kimisa sound effect
-//        Assets.shortKimisa = game.getAudio().createMusic("short_kimisa.mp3");
-//        Assets.shortKimisa.setLooping(false);
-//        Assets.shortKimisa.setVolume(0.85f);
 
         game.setScreen(new MainMenuScreen(game));
     }

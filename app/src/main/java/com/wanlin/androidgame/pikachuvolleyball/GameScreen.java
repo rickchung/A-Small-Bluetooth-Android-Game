@@ -47,7 +47,8 @@ public class GameScreen extends Screen {
     public final int STOP_RIGHT = 4;
     public final int STOP_BOTH = 123;
     public final int PAUSE = 10;
-    private final int JUMP = 5;
+    public final int JUMP = 5;
+    public static final int YOU_ARE_LOSE = 938495;
     private boolean isMoving = false;
     private boolean isHolding = false;
     private final int ANI_RATE = 150;
@@ -56,13 +57,21 @@ public class GameScreen extends Screen {
 
     private BluetoothModule bluetoothModule;
 
+    private boolean isWin = false;
+
+    private Game game;
+
     int targetScore = 15;
     Paint paint;
     float densityRatio;
 
     public GameScreen(Game game) {
         super(game);
+        this.game = game;
+        init();
+    }
 
+    private void init() {
         // Set screen size
         Point screenSizePoint = ((PikachuVolleyball) game).getSizePoint();
         //((PikachuVolleyball)game).getWindowManager().getDefaultDisplay().getRealSize(screenSizePoint);
@@ -196,12 +205,6 @@ public class GameScreen extends Screen {
     }
 
     private void updateReady(List<Input.TouchEvent> touchEvents) {
-
-        // This example starts with a "Ready" screen.
-        // When the user touches the screen, the game begins.
-        // state now becomes GameState.Running.
-        // Now the updateRunning() method will be called!
-
         if (touchEvents.size() > 0) {
             stargGame();
             bluetoothModule.sendMessage(String.valueOf(START_THAT_FUKING_GAMEEEE));
@@ -288,6 +291,9 @@ public class GameScreen extends Screen {
                 musicIsPlaying = true;
                 Assets.shortKimisa = game.getAudio().createMusic("short_kimisa.mp3");
                 Assets.shortKimisa.play();
+                bluetoothModule.sendMessage(String.valueOf(YOU_ARE_LOSE));
+                isWin = true;
+                endGame();
             }
         }
         else {
@@ -407,8 +413,13 @@ public class GameScreen extends Screen {
 
     private void drawGameOverUI() {
         Graphics g = game.getGraphics();
-        g.drawRect(0, 0, 1281, 801, Color.BLACK);
-        g.drawString("GAME OVER.", 640, 300, paint);
+        if (isWin) {
+            g.drawImage(Assets.gameoverImage, 0, 0);
+            g.drawImage(currentSpriteA, me.getCenterX(), me.getCenterY());
+            g.drawImage(currentSpriteB, enemy.getCenterX(), enemy.getCenterY());
+        }
+        else
+            g.drawImage(Assets.loserImage, 0, 0);
 
     }
 
@@ -450,8 +461,12 @@ public class GameScreen extends Screen {
     @Override
     public void backButton() {
         pause();
-        state = GameState.Paused;
-        game.setScreen(new MainMenuScreen(game));
+        if (state == GameState.GameOver) {
+            game.setScreen(new GameScreen(game));
+        }
+        else {
+            game.setScreen(new MainMenuScreen(game));
+        }
     }
 
     public Pikachu getEnemy() {
@@ -461,4 +476,6 @@ public class GameScreen extends Screen {
     public void stargGame() {
         state = GameState.Running;
     }
+
+    public void endGame() { state = GameState.GameOver; }
 }

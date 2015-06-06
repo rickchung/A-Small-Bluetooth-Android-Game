@@ -45,7 +45,12 @@ public class PikachuVolleyball extends AndroidGame implements HandlerMessageCall
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        init();
+    }
 
+    /* ========== Customized Members ========== */
+
+    public void init() {
         // Set current screen type
         setCurScreenType(TYPE_SCREEN_MENU);
 
@@ -57,8 +62,6 @@ public class PikachuVolleyball extends AndroidGame implements HandlerMessageCall
         btDevicesListAdapter =  btModule.bindBtDevicesAdapter(btDevicesListView);
         btModule.bindMsgAdapter(btMsgListView, android.R.layout.simple_list_item_1);
     }
-
-    /* ========== Customized Members ========== */
 
     @Override
     public void setCurScreenType(int type) {
@@ -141,6 +144,9 @@ public class PikachuVolleyball extends AndroidGame implements HandlerMessageCall
                     }
                     else if (controlCmd == GameScreen.START_THAT_FUKING_GAMEEEE) {
                         ((GameScreen) getCurrentScreen()).stargGame();
+                    }
+                    else if (controlCmd == GameScreen.YOU_ARE_LOSE) {
+                        ((GameScreen) getCurrentScreen()).endGame();
                     }
                     else {
                         ((GameScreen) getCurrentScreen()).getEnemy().handleAction(controlCmd);
