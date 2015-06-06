@@ -94,7 +94,7 @@ public class BluetoothModule {
 
         // Init Bluetooth and start server socket
         btInit();
-        btConnectAsServer();
+        // btConnectAsServer();
     }
 
     /**
@@ -236,6 +236,8 @@ public class BluetoothModule {
     public String btOKCallback() {
         String message = "Bluetooth is OK";
         Log.d(LOG_TAG, message);
+        // Start server thread
+        btConnectAsServer();
         return message;
     }
 
@@ -245,6 +247,7 @@ public class BluetoothModule {
     public String btErrorCallback() {
         String message = "Bluetooth IS NOT OK";
         Log.d(LOG_TAG, message);
+        // Show error message to the user
         return message;
     }
 
