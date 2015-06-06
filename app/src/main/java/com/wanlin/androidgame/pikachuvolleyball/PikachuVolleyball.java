@@ -1,6 +1,8 @@
 package com.wanlin.androidgame.pikachuvolleyball;
 
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothDevice;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
@@ -172,10 +174,22 @@ public class PikachuVolleyball extends AndroidGame implements HandlerMessageCall
         switch (requestCode) {
             case BluetoothModule.REQUEST_ENABLE_BIT:
                 Log.d(LOG_TAG, "[onActivityResult] REQUEST_ENABLE_BIT");
+                // If user has enabled the Bluetooth function
                 if (resultCode == RESULT_OK) {
                     btModule.btOKCallback();
                 }
                 else if (resultCode == RESULT_CANCELED) {
+                    new AlertDialog.Builder(this)
+                        .setTitle("No Bluetooth Found")
+                        .setMessage("Cannot running without Bluetooth. Please enable it.")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // exit game
+                                finish();
+                            }
+                        })
+                        .show();
                     btModule.btErrorCallback();
                 }
                 break;

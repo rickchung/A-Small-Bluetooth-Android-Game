@@ -247,7 +247,6 @@ public class BluetoothModule {
     public String btErrorCallback() {
         String message = "Bluetooth IS NOT OK";
         Log.d(LOG_TAG, message);
-        // Show error message to the user
         return message;
     }
 
