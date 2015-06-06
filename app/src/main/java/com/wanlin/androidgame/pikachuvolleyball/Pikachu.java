@@ -1,11 +1,13 @@
 package com.wanlin.androidgame.pikachuvolleyball;
 
+import android.graphics.Point;
+
 /**
  * Created by wanlin on 15/6/5.
  */
 public class Pikachu {
     final int JUMP_SPEED = -15;
-    final int MOVE_SPEED = 5;
+    int MOVE_SPEED = 5;
 
     private final int PAUSE = 0;
     private final int MOVE_LEFT = 1;
@@ -13,6 +15,7 @@ public class Pikachu {
     private final int STOP_LEFT = 3;
     private final int STOP_RIGHT = 4;
     private final int JUMP = 5;
+    private final int NUM_MOVING_SLOTS = 100;
 
     private boolean ducked = false;
     private boolean jumped = false;
@@ -26,17 +29,13 @@ public class Pikachu {
     private int centerY;
 
     private float screenDensityRatio;
-
 //    private ArrayList<com.kilobolt.robotgame.Projectile> projectiles = new ArrayList<com.kilobolt.robotgame.Projectile>();
 
-    Pikachu (int x, int y){
-        this(x, y, 1.0f);
-    }
 
-    Pikachu (int x, int y, float screenDensityRatio) {
+    Pikachu (int x, int y, Point sizePoint) {
         centerX = x;
         centerY = y;
-        this.screenDensityRatio = screenDensityRatio;
+        this.screenDensityRatio = sizePoint.x / NUM_MOVING_SLOTS;
     }
 
     public void update() {

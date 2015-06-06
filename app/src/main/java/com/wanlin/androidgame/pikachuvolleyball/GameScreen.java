@@ -67,8 +67,8 @@ public class GameScreen extends Screen {
             characterA = Assets.characterA;
             characterB = Assets.characterB;
 
-            me = new Pikachu(screenWidth - characterA.getWidth(), screenHeight - characterA.getHeight(), densityRatio);
-            enemy = new Pikachu(0, screenHeight - characterB.getHeight(), densityRatio);
+            me = new Pikachu(screenWidth - characterA.getWidth(), screenHeight - characterA.getHeight(), screenSizePoint);
+            enemy = new Pikachu(0, screenHeight - characterB.getHeight(), screenSizePoint);
 
             // create an animation and add two characterA and characterB into the frame
             meAnim = new Animation();
@@ -80,8 +80,8 @@ public class GameScreen extends Screen {
             characterA = Assets.characterB;
             characterB = Assets.characterA;
 
-            me = new Pikachu(0, screenHeight - characterB.getHeight(), densityRatio);
-            enemy = new Pikachu(screenWidth - characterA.getWidth(), screenHeight - characterA.getHeight(), densityRatio);
+            me = new Pikachu(0, screenHeight - characterB.getHeight(), screenSizePoint);
+            enemy = new Pikachu(screenWidth - characterA.getWidth(), screenHeight - characterA.getHeight(), screenSizePoint);
 
             // create an animation and add two characterA and characterB into the frame
             meAnim = new Animation();
