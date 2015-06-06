@@ -197,7 +197,7 @@ public class GameScreen extends Screen {
                 isHolding = true;
 
                 // Pause
-                if (inBounds(event, 0, 0, screenWidth, pauseHeight)) {
+                if (inBounds(event, 0, 0, 400, 200)) {
                     if (isMoving) {
                         isMoving = false;
                         me.handleAction(STOP_LEFT);
@@ -281,18 +281,12 @@ public class GameScreen extends Screen {
         for (int i = 0; i < len; i++) {
             Input.TouchEvent event = touchEvents.get(i);
             if (event.type == Input.TouchEvent.TOUCH_UP) {
-                if (inBounds(event, 0, 0, 800, 240)) {
-
-                    if (!inBounds(event, 0, 0, 35, 35)) {
-                        bluetoothModule.sendMessage(String.valueOf(YOU_GOOD_TO_GO));
-                        resume();
-                    }
+                if (inBounds(event, 0, 0, 400, 200)) {
+                    bluetoothModule.sendMessage(String.valueOf(YOU_GOOD_TO_GO));
+                    resume();
                 }
             }
         }
-//        for (int i = 0; i < len; i++) {
-//            Input.TouchEvent event = touchEvents.get(i);
-//        }
     }
 
     private void updateGameOver(List<Input.TouchEvent> touchEvents) {
@@ -319,7 +313,6 @@ public class GameScreen extends Screen {
 
         // First draw the game elements.
         g.drawImage(Assets.gameBgImage, 0, 0);
-
         g.drawImage(currentSpriteA, me.getCenterX(), me.getCenterY());
         g.drawImage(currentSpriteB, enemy.getCenterX(), enemy.getCenterY());
 
@@ -365,10 +358,9 @@ public class GameScreen extends Screen {
     private void drawRunningUI() {
         Graphics g = game.getGraphics();
 
-        g.drawImage(currentSpriteA, me.getCenterX(),
-                me.getCenterY());
-        g.drawImage(currentSpriteB, enemy.getCenterX(),
-                enemy.getCenterY());
+        g.drawImage(currentSpriteA, me.getCenterX(), me.getCenterY());
+        g.drawImage(currentSpriteB, enemy.getCenterX(), enemy.getCenterY());
+        g.drawString("Pause", 200, 100, paint);
     }
 
     private void drawPausedUI() {

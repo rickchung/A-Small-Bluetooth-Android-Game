@@ -8,7 +8,7 @@ import android.util.Log;
  */
 public class Pikachu {
     final String LOG_TAG = "Pikachu";
-    final int JUMP_SPEED = -15;
+    float JUMP_SPEED = -15.0f;
     float MOVE_SPEED = 5.0f;
 
     private final int PAUSE = 0;
@@ -31,15 +31,17 @@ public class Pikachu {
     private int centerX;
     private int centerY;
 
-    private float screenDensityRatio;
+    private float screenDensityRatioX;
+    private float screenDensityRatioY;
 //    private ArrayList<com.kilobolt.robotgame.Projectile> projectiles = new ArrayList<com.kilobolt.robotgame.Projectile>();
 
 
     Pikachu (int x, int y, Point sizePoint) {
         centerX = x;
         centerY = y;
-        this.screenDensityRatio = sizePoint.x / NUM_MOVING_SLOTS;
-        Log.d(LOG_TAG, "Ratio info: " + screenDensityRatio + " screen size: " + sizePoint.x);
+        screenDensityRatioX = sizePoint.x / NUM_MOVING_SLOTS;
+        screenDensityRatioY = sizePoint.y / NUM_MOVING_SLOTS;
+        Log.d(LOG_TAG, "Ratio info: " + screenDensityRatioX + " screen size: " + sizePoint.x);
     }
 
     public void update() {
@@ -68,21 +70,21 @@ public class Pikachu {
 
     private void jump() {
         if (jumped == false) {
-            speedY = JUMP_SPEED;
+            speedY = JUMP_SPEED * screenDensityRatioY;
             jumped = true;
         }
     }
 
     private void moveRight() {
         if (ducked == false) {
-            speedX = MOVE_SPEED * screenDensityRatio;
+            speedX = MOVE_SPEED * screenDensityRatioX;
             setMovingRight(true);
         }
     }
 
     private void moveLeft() {
         if (ducked == false) {
-            speedX = -MOVE_SPEED * screenDensityRatio;
+            speedX = -MOVE_SPEED * screenDensityRatioX;
             setMovingLeft(true);
         }
     }
@@ -101,17 +103,6 @@ public class Pikachu {
         setMovingLeft(false);
         setMovingRight(false);
         speedX = 0;
-//        if (isMovingRight() == false && isMovingLeft() == false) {
-//            speedX = 0;
-//        }
-//
-//        if (isMovingRight() == false && isMovingLeft() == true) {
-//            moveLeft();
-//        }
-//
-//        if (isMovingRight() == true && isMovingLeft() == false) {
-//            moveRight();
-//        }
     }
 
     private void pause(){
