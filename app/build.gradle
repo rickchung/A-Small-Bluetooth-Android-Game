@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 17
+    compileSdkVersion 19
     buildToolsVersion "21.1.2"
 
     defaultConfig {
         applicationId "com.jamescho.androidgame"
-        minSdkVersion 13
-        targetSdkVersion 17
+        minSdkVersion 17
+        targetSdkVersion 19
     }
 
     buildTypes {
