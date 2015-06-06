@@ -85,8 +85,8 @@ public class GameScreen extends Screen {
             ME_BOUNDARY = screenWidth;
         }
         else {
-            characterA = Assets.characterB;
-            characterB = Assets.characterA;
+            characterA = Assets.characterA;
+            characterB = Assets.characterB;
 
             me = new Pikachu(0, screenHeight - characterB.getHeight(), screenSizePoint);
             enemy = new Pikachu(screenWidth - characterA.getWidth(), screenHeight - characterA.getHeight(), screenSizePoint);
