@@ -86,18 +86,18 @@ public class MainMenuScreen extends Screen {
                     ((PikachuVolleyball) game).getBtModule().btMakeDiscoverable();
                 }
 
-                if (inBounds(event, 0, 20 + Assets.findDevicesBt.getHeight(), Assets.findDevicesBt.getWidth(), Assets.findDevicesBt.getHeight())) {
+                if (inBounds(event, 0, 40 + Assets.findDevicesBt.getHeight(), Assets.findDevicesBt.getWidth(), Assets.findDevicesBt.getHeight())) {
                     // FIND DEVICES
                     bluetoothMsg = "FIND DEVICES";
                     Log.e(LOG_TAG, "FIND DEVICES");
                     ((PikachuVolleyball) game).getBtModule().btFindDevices();
                 }
 
-                if (inBounds(event, 0, (20 + Assets.startButton.getHeight())*2, Assets.startButton.getWidth(), Assets.startButton.getHeight())) {
-                    // CONNECT TO...
-                    bluetoothMsg = "CONNECT TO...";
-                    Log.e(LOG_TAG, "CONNECT TO...");
-                }
+//                if (inBounds(event, 0, (20 + Assets.startButton.getHeight())*2, Assets.startButton.getWidth(), Assets.startButton.getHeight())) {
+//                    // CONNECT TO...
+//                    bluetoothMsg = "CONNECT TO...";
+//                    Log.e(LOG_TAG, "CONNECT TO...");
+//                }
             }
         }
 
@@ -123,7 +123,7 @@ public class MainMenuScreen extends Screen {
         Graphics g = game.getGraphics();
         g.drawImage(Assets.menuBgImage, 0, 0); // Draw bg image
         g.drawImage(Assets.makeDiscoverableBt, 0, 0); // Draw make discoverable bt image
-        g.drawImage(Assets.findDevicesBt, 0, 20 + Assets.findDevicesBt.getHeight()); // Draw find devices bt image
+        g.drawImage(Assets.findDevicesBt, 0, 40 + Assets.findDevicesBt.getHeight()); // Draw find devices bt image
 
         if (bluetoothMsg == "Successful MSG"){
             g.drawImage(Assets.startButton,
@@ -143,7 +143,6 @@ public class MainMenuScreen extends Screen {
             g.drawARGB(155, 0, 0, 0);
             g.drawString(bluetoothMsg, screenSizePoint.x / 2, 0, paint);
         }
-
     }
 
     @Override
