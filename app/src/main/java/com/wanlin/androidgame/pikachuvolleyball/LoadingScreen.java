@@ -70,9 +70,9 @@ public class LoadingScreen extends Screen {
         Assets.bgMusic.setVolume(0.85f);
 
         // set short-kimisa sound effect
-        Assets.shortKimisa = game.getAudio().createMusic("short_kimisa.mp3");
-        Assets.shortKimisa.setLooping(false);
-        Assets.shortKimisa.setVolume(0.85f);
+//        Assets.shortKimisa = game.getAudio().createMusic("short_kimisa.mp3");
+//        Assets.shortKimisa.setLooping(false);
+//        Assets.shortKimisa.setVolume(0.85f);
 
         game.setScreen(new MainMenuScreen(game));
     }

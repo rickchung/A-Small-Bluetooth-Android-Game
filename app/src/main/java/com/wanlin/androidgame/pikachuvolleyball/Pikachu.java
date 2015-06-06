@@ -1,7 +1,6 @@
 package com.wanlin.androidgame.pikachuvolleyball;
 
 import android.graphics.Point;
-import android.util.Log;
 
 /**
  * Created by wanlin on 15/6/5.
@@ -34,15 +33,18 @@ public class Pikachu {
 
     private float screenDensityRatioX;
     private float screenDensityRatioY;
-//    private ArrayList<com.kilobolt.robotgame.Projectile> projectiles = new ArrayList<com.kilobolt.robotgame.Projectile>();
+
+    private int selfBound;
+    private int middleBound;
 
 
-    Pikachu (int x, int y, Point sizePoint) {
+    Pikachu (int x, int y, Point sizePoint, int selfBound, int middleBlound) {
         centerX = x;
         centerY = y;
         screenDensityRatioX = sizePoint.x / NUM_MOVING_SLOTS;
         screenDensityRatioY = sizePoint.y / NUM_MOVING_SLOTS;
-        Log.d(LOG_TAG, "Ratio info: " + screenDensityRatioX + " screen size: " + sizePoint.x);
+        this.selfBound = selfBound;
+        this.middleBound = middleBlound;
     }
 
     public void update() {
@@ -63,15 +65,6 @@ public class Pikachu {
             jumped = false;
             speedY = 0;
         }
-//
-//        if (speedY > 3){
-//            jumped = true;
-//        }
-
-        // Prevents going beyond X coordinate of 0
-//        if (centerX + speedX <= 60) {
-//            centerX = 61;
-//        }
     }
 
     private void jump() {
@@ -174,8 +167,4 @@ public class Pikachu {
                 break;
         }
     }
-
-//    public ArrayList getProjectiles() {
-//        return projectiles;
-//    }
 }
