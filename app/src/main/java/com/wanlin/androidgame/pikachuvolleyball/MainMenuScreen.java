@@ -9,7 +9,6 @@ import com.kilobolt.framework.Game;
 import com.kilobolt.framework.Graphics;
 import com.kilobolt.framework.Input;
 import com.kilobolt.framework.Screen;
-import com.kilobolt.framework.implementation.AndroidGame;
 
 import java.util.List;
 
@@ -186,7 +185,7 @@ public class MainMenuScreen extends Screen {
     }
 
     public void startGame() {
-        game.setCurScreenType(AndroidGame.TYPE_SCREEN_GAME);
+        game.setCurScreenType(PikachuVolleyball.TYPE_SCREEN_GAME);
         game.setScreen(new GameScreen(game));
     }
 }

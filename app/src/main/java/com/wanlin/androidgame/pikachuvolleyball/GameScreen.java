@@ -3,13 +3,12 @@ package com.wanlin.androidgame.pikachuvolleyball;
 import android.graphics.Color;
 import android.graphics.Paint;
 
-import com.rick.androidgame.bluetooth.BluetoothModule;
 import com.kilobolt.framework.Game;
 import com.kilobolt.framework.Graphics;
 import com.kilobolt.framework.Image;
 import com.kilobolt.framework.Input;
 import com.kilobolt.framework.Screen;
-import com.kilobolt.framework.implementation.AndroidGame;
+import com.rick.androidgame.bluetooth.BluetoothModule;
 
 import java.util.List;
 
@@ -55,7 +54,7 @@ public class GameScreen extends Screen {
         super(game);
 
         // Initialize game objects here
-        if ( ((AndroidGame) game).isHost() ) {
+        if ( ((PikachuVolleyball) game).isHost() ) {
             characterA = Assets.characterA;
             characterB = Assets.characterB;
             me = new Pikachu(screenWidth - characterA.getWidth(), screenHeight - characterA.getHeight());
@@ -247,7 +246,7 @@ public class GameScreen extends Screen {
                         && event.y < 500) {
                     nullify();
 
-                    game.setCurScreenType(AndroidGame.TYPE_SCREEN_MENU);
+                    game.setCurScreenType(PikachuVolleyball.TYPE_SCREEN_MENU);
                     game.setScreen(new MainMenuScreen(game));
                     return;
                 }
