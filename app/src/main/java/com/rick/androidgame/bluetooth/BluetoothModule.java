@@ -108,6 +108,10 @@ public class BluetoothModule {
         return btListAdapter;
     }
 
+    public BtListAdapter getBtDevicesAdapter() {
+        return btListAdapter;
+    }
+
     /**
      * Set the adapter of listView with the default messages ArrayAdapter
      * @param listView
