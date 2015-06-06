@@ -45,11 +45,11 @@ public class GameScreen extends Screen {
     private BluetoothModule bluetoothModule;
 
     // Variable Setup
-
     // You would create game objects here.
 
     int targetScore = 15;
     Paint paint;
+    float densityRatio;
 
     public GameScreen(Game game) {
         super(game);
@@ -59,13 +59,16 @@ public class GameScreen extends Screen {
         screenWidth = screenSizePoint.x;
         screenHeight = screenSizePoint.y;
 
+        // Density
+        densityRatio = ((PikachuVolleyball) game).getResources().getDisplayMetrics().density;
+
         // Initialize game objects here
         if ( ((PikachuVolleyball) game).isHost() ) {
             characterA = Assets.characterA;
             characterB = Assets.characterB;
 
-            me = new Pikachu(screenWidth - characterA.getWidth(), screenHeight - characterA.getHeight());
-            enemy = new Pikachu(0, screenHeight - characterB.getHeight());
+            me = new Pikachu(screenWidth - characterA.getWidth(), screenHeight - characterA.getHeight(), densityRatio);
+            enemy = new Pikachu(0, screenHeight - characterB.getHeight(), densityRatio);
 
             // create an animation and add two characterA and characterB into the frame
             meAnim = new Animation();
@@ -77,8 +80,8 @@ public class GameScreen extends Screen {
             characterA = Assets.characterB;
             characterB = Assets.characterA;
 
-            me = new Pikachu(0, screenHeight - characterB.getHeight());
-            enemy = new Pikachu(screenWidth - characterA.getWidth(), screenHeight - characterA.getHeight());
+            me = new Pikachu(0, screenHeight - characterB.getHeight(), densityRatio);
+            enemy = new Pikachu(screenWidth - characterA.getWidth(), screenHeight - characterA.getHeight(), densityRatio);
 
             // create an animation and add two characterA and characterB into the frame
             meAnim = new Animation();

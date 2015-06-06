@@ -19,17 +19,24 @@ public class Pikachu {
     private boolean movingLeft = false;
     private boolean movingRight = false;
 
-    private int speedX = 0;
-    private int speedY = 0;
+    private float speedX = 0;
+    private float speedY = 0;
 
     private int centerX;
     private int centerY;
 
+    private float screenDensityRatio;
+
 //    private ArrayList<com.kilobolt.robotgame.Projectile> projectiles = new ArrayList<com.kilobolt.robotgame.Projectile>();
 
     Pikachu (int x, int y){
+        this(x, y, 1.0f);
+    }
+
+    Pikachu (int x, int y, float screenDensityRatio) {
         centerX = x;
         centerY = y;
+        this.screenDensityRatio = screenDensityRatio;
     }
 
     public void update() {
@@ -65,14 +72,14 @@ public class Pikachu {
 
     private void moveRight() {
         if (ducked == false) {
-            speedX = MOVE_SPEED;
+            speedX = MOVE_SPEED * screenDensityRatio;
             setMovingRight(true);
         }
     }
 
     private void moveLeft() {
         if (ducked == false) {
-            speedX = -MOVE_SPEED;
+            speedX = -MOVE_SPEED * screenDensityRatio;
             setMovingLeft(true);
         }
     }

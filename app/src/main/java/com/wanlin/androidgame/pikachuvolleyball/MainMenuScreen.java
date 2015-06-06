@@ -118,16 +118,13 @@ public class MainMenuScreen extends Screen {
      * Used to create rectangles with coordinates (x, y, x2, y2).
      * We use this to create regions in the screen that we can touch to interact with the game.
      */
-
-    private boolean inBounds(Input.TouchEvent event, int x, int y, int width,
-                             int height) {
+    private boolean inBounds(Input.TouchEvent event, int x, int y, int width, int height) {
         if (event.x > x && event.x < x + width - 1 && event.y > y
                 && event.y < y + height - 1)
             return true;
         else
             return false;
     }
-
 
     @Override
     public void paint(float deltaTime) {
@@ -164,24 +161,20 @@ public class MainMenuScreen extends Screen {
 //        Assets.bgMusic.play();
     }
 
-
     @Override
     public void pause() {
 
     }
-
 
     @Override
     public void resume() {
 
     }
 
-
     @Override
     public void dispose() {
 
     }
-
 
     @Override
     public void backButton() {
