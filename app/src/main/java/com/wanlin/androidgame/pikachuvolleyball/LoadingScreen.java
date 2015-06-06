@@ -41,11 +41,28 @@ public class LoadingScreen extends Screen {
     public void update(float deltaTime) {
         Graphics g = game.getGraphics();
 
-        //set background Image
-        Assets.loadingBgImage = g.newImage("loadingBgImage.jpg", Graphics.ImageFormat.RGB565, screenWidth, screenHeight);
+        // set background image
         Assets.gameBgImage = g.newImage("gameBgImage.png", Graphics.ImageFormat.RGB565, screenWidth, screenHeight);
+        Assets.menuBgImage = g.newImage("menuBgImage.jpg", Graphics.ImageFormat.RGB565, screenSizePoint.x, screenSizePoint.y);
+
+        // set pikachu character image
         Assets.characterA = g.newImage("meImage.png", Graphics.ImageFormat.ARGB4444);
         Assets.characterB = g.newImage("enemyImage.png", Graphics.ImageFormat.ARGB4444);
+
+        // set button image
+        Assets.startButton = g.newImage("start-button.png", Graphics.ImageFormat.RGB565);
+        Assets.makeDiscoverableBt = g.newImage("make_discoverable_bt.png", Graphics.ImageFormat.RGB565);
+        Assets.findDevicesBt = g.newImage("find_devices_bt.png", Graphics.ImageFormat.RGB565);
+
+        // set background music
+        Assets.bgMusic = game.getAudio().createMusic("kimisa.mp3");
+        Assets.bgMusic.setLooping(true);
+        Assets.bgMusic.setVolume(0.85f);
+
+        // set short-kimisa sound effect
+        Assets.shortKimisa = game.getAudio().createMusic("short_kimisa.mp3");
+        Assets.shortKimisa.setLooping(false);
+        Assets.shortKimisa.setVolume(0.85f);
 
         game.setScreen(new MainMenuScreen(game));
     }
@@ -53,6 +70,8 @@ public class LoadingScreen extends Screen {
     @Override
     public void paint(float deltaTime) {
         Graphics g = game.getGraphics();
+
+        Assets.loadingBgImage = g.newImage("loadingBgImage.jpg", Graphics.ImageFormat.RGB565, screenWidth, screenHeight);
         g.drawImage(Assets.loadingBgImage, 0, 0);
     }
 

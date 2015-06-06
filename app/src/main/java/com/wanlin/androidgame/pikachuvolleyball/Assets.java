@@ -14,7 +14,6 @@ import com.kilobolt.framework.Music;
 public class Assets {
     public static Image menuBgImage, gameBgImage, loadingBgImage;
     public static Image characterA, characterB;
-    public static Image me, enemy;
-    public static Image startButton;
-    public static Music bgMusic;
+    public static Image startButton, makeDiscoverableBt, findDevicesBt;
+    public static Music bgMusic, shortKimisa;
 }

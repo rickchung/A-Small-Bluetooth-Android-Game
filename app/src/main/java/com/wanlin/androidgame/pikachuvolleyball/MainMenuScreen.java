@@ -28,14 +28,7 @@ public class MainMenuScreen extends Screen {
 
         // Get Point for screen size
         screenSizePoint = ((PikachuVolleyball)game).getSizePoint();
-
-        Graphics g = game.getGraphics();
-        Assets.menuBgImage = g.newImage("menuBgImage.jpg", Graphics.ImageFormat.RGB565, screenSizePoint.x, screenSizePoint.y);
-        Assets.startButton = g.newImage("start-button.png", Graphics.ImageFormat.RGB565);
-
-        Assets.bgMusic = game.getAudio().createMusic("kimisa.mp3");
-        Assets.bgMusic.setLooping(true);
-        Assets.bgMusic.setVolume(0.85f);
+        Assets.bgMusic.play();
 
         paint = new Paint();
 
@@ -53,14 +46,13 @@ public class MainMenuScreen extends Screen {
      */
     @Override
     public void update(float deltaTime) {
-        Graphics g = game.getGraphics();
+//        Graphics g = game.getGraphics();
         List<Input.TouchEvent> touchEvents = game.getInput().getTouchEvents();
 
         int len = touchEvents.size();
         for (int i = 0; i < len; i++) {
             Input.TouchEvent event = touchEvents.get(i);
             if (event.type == Input.TouchEvent.TOUCH_UP) {
-
 
                 if (bluetoothMsg == "Successful MSG") {
                     if (inBounds(event, (screenSizePoint.x - Assets.startButton.getWidth()) / 2,
@@ -87,15 +79,15 @@ public class MainMenuScreen extends Screen {
                     }
                 }
 
-                if (inBounds(event, 0, 0, Assets.startButton.getWidth(), Assets.startButton.getHeight())) {
+                if (inBounds(event, 0, 0, Assets.makeDiscoverableBt.getWidth(), Assets.makeDiscoverableBt.getHeight())) {
                     // MAKE DISCOVERABLE
                     bluetoothMsg = "MAKE DISCOVERABLE";
                     Log.e(LOG_TAG, "MAKE DISCOVERABLE");
                     ((PikachuVolleyball) game).getBtModule().btMakeDiscoverable();
                 }
 
-                if (inBounds(event, 0, 20 + Assets.startButton.getHeight(), Assets.startButton.getWidth(), Assets.startButton.getHeight())) {
-                    // SET SERVERSOCKET
+                if (inBounds(event, 0, 20 + Assets.findDevicesBt.getHeight(), Assets.findDevicesBt.getWidth(), Assets.findDevicesBt.getHeight())) {
+                    // FIND DEVICES
                     bluetoothMsg = "FIND DEVICES";
                     Log.e(LOG_TAG, "FIND DEVICES");
                     ((PikachuVolleyball) game).getBtModule().btFindDevices();
@@ -129,16 +121,9 @@ public class MainMenuScreen extends Screen {
     @Override
     public void paint(float deltaTime) {
         Graphics g = game.getGraphics();
-        g.drawImage(Assets.menuBgImage, 0, 0);
-
-        // MAKE DISCOVERABLE
-        g.drawImage(Assets.startButton, 0, 0);
-
-        // SET SERVERSOCKET
-        g.drawImage(Assets.startButton, 0, 20 + Assets.startButton.getHeight());
-
-        // CONNECT TO...
-        g.drawImage(Assets.startButton, 0, (20 + Assets.startButton.getHeight()) * 2);
+        g.drawImage(Assets.menuBgImage, 0, 0); // Draw bg image
+        g.drawImage(Assets.makeDiscoverableBt, 0, 0); // Draw make discoverable bt image
+        g.drawImage(Assets.findDevicesBt, 0, 20 + Assets.findDevicesBt.getHeight()); // Draw find devices bt image
 
         if (bluetoothMsg == "Successful MSG"){
             g.drawImage(Assets.startButton,
@@ -146,6 +131,7 @@ public class MainMenuScreen extends Screen {
                     (screenSizePoint.y - Assets.startButton.getHeight())/2);
         }
 
+        // draw bluetooth devices string
         else if (bluetoothMsg == "FIND DEVICES") {
             for (int i = 0; i < ((PikachuVolleyball) game).getFoundDevices().size(); i++) {
                 BluetoothDevice btDevice = ((PikachuVolleyball) game).getFoundDevices().get(i);
@@ -158,22 +144,21 @@ public class MainMenuScreen extends Screen {
             g.drawString(bluetoothMsg, screenSizePoint.x / 2, 0, paint);
         }
 
-//        Assets.bgMusic.play();
     }
 
     @Override
     public void pause() {
-
+        Assets.bgMusic.pause();
     }
 
     @Override
     public void resume() {
-
+        Assets.bgMusic.play();
     }
 
     @Override
     public void dispose() {
-
+        Assets.bgMusic.pause();
     }
 
     @Override
