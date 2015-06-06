@@ -47,7 +47,11 @@ public class LoadingScreen extends Screen {
 
         // set pikachu character image
         Assets.characterA = g.newImage("meImage.png", Graphics.ImageFormat.ARGB4444);
+        Assets.characterAA = g.newImage("meImage1.png", Graphics.ImageFormat.ARGB4444);
+        Assets.characterAM = g.newImage("meImage1.5.png", Graphics.ImageFormat.ARGB4444);
         Assets.characterB = g.newImage("enemyImage.png", Graphics.ImageFormat.ARGB4444);
+        Assets.characterBB = g.newImage("enemyImage1.png", Graphics.ImageFormat.ARGB4444);
+        Assets.characterBM = g.newImage("enemyImage1.5.png", Graphics.ImageFormat.ARGB4444);
 
         // set button image
         Assets.startButton = g.newImage("start-button.png", Graphics.ImageFormat.RGB565);

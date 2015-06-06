@@ -140,7 +140,7 @@ public class MainMenuScreen extends Screen {
         }
 
         else {
-            g.drawARGB(155, 0, 0, 0);
+//            g.drawARGB(155, 0, 0, 0);
             g.drawString(bluetoothMsg, screenSizePoint.x / 2, 0, paint);
         }
     }

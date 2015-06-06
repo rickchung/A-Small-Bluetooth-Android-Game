@@ -24,11 +24,13 @@ public class GameScreen extends Screen {
 
     GameState state = GameState.Ready;
     private static Pikachu me, enemy;
-    private Image characterA, characterB, volleyball, currentSpriteA, currentSpriteB;
+    private Image characterA, characterB, characterAA, characterBB, characterBM, characterAM,
+            volleyball, currentSpriteA, currentSpriteB;
     private static int screenWidth;
     private static int screenHeight;
     private static int pauseHeight = 300;
     public static int MIDDLE_BOUNDARY;
+    public static int MIDDLE_BOUNDARY_OTHER;
     public static int ME_BOUNDARY;
     public static int ENEMY_BOUNDARY;
     private Animation meAnim;
@@ -47,6 +49,7 @@ public class GameScreen extends Screen {
     private final int JUMP = 5;
     private boolean isMoving = false;
     private boolean isHolding = false;
+    private final int ANI_RATE = 150;
 
     private BluetoothModule bluetoothModule;
 
@@ -62,7 +65,6 @@ public class GameScreen extends Screen {
         //((PikachuVolleyball)game).getWindowManager().getDefaultDisplay().getRealSize(screenSizePoint);
         screenWidth = screenSizePoint.x;
         screenHeight = screenSizePoint.y;
-        MIDDLE_BOUNDARY = screenWidth / 2;
 
         // Density
         densityRatio = ((PikachuVolleyball) game).getResources().getDisplayMetrics().density;
@@ -70,35 +72,61 @@ public class GameScreen extends Screen {
         // Initialize game objects here
         if ( ((PikachuVolleyball) game).isHost() ) {
             characterA = Assets.characterA;
+            characterAA = Assets.characterAA;
+            characterAM = Assets.characterAM;
             characterB = Assets.characterB;
+            characterBB = Assets.characterBB;
+            characterBM = Assets.characterBM;
 
-            me = new Pikachu(screenWidth - characterA.getWidth(), screenHeight - characterA.getHeight(), screenSizePoint);
-            enemy = new Pikachu(0, screenHeight - characterB.getHeight(), screenSizePoint);
+            // I'm at the right
+            me = new Pikachu(screenWidth - characterA.getWidth(), screenHeight - characterA.getHeight()-130, screenSizePoint);
+            enemy = new Pikachu(0, screenHeight - characterB.getHeight()-130, screenSizePoint);
 
             // create an animation and add two characterA and characterB into the frame
             meAnim = new Animation();
-            meAnim.addFrame(characterA, 50);
+            Image[] meFrames = {characterA, characterAM, characterAA, characterAM};
+            for (Image i : meFrames) {
+                meAnim.addFrame(i, ANI_RATE);
+            }
             enemyAnim = new Animation();
-            enemyAnim.addFrame(characterB, 50);
+            Image[] enFrames = {characterB, characterBM, characterBB, characterBM};
+            for (Image i : enFrames) {
+                enemyAnim.addFrame(i, ANI_RATE);
+            }
 
+            // Set boundaries
             ENEMY_BOUNDARY = 0;
             ME_BOUNDARY = screenWidth;
+            MIDDLE_BOUNDARY = screenWidth / 2 - 20;
         }
         else {
             characterA = Assets.characterA;
+            characterAA = Assets.characterAA;
+            characterAM = Assets.characterAM;
             characterB = Assets.characterB;
+            characterBB = Assets.characterBB;
+            characterBM = Assets.characterBM;
 
-            me = new Pikachu(0, screenHeight - characterB.getHeight(), screenSizePoint);
-            enemy = new Pikachu(screenWidth - characterA.getWidth(), screenHeight - characterA.getHeight(), screenSizePoint);
+            // I'm at the left
+            me = new Pikachu(0, screenHeight - characterB.getHeight()-130, screenSizePoint);
+            enemy = new Pikachu(screenWidth - characterA.getWidth(), screenHeight - characterA.getHeight()-130, screenSizePoint);
 
             // create an animation and add two characterA and characterB into the frame
             meAnim = new Animation();
-            meAnim.addFrame(characterB, 50);
+            Image[] meFrames = {characterB, characterBM, characterBB, characterBM};
+            for (Image i : meFrames) {
+                meAnim.addFrame(i, ANI_RATE);
+            }
             enemyAnim = new Animation();
-            enemyAnim.addFrame(characterA, 50);
+            Image[] enFrames = {characterA, characterAM, characterAA, characterAM};
+            for (Image i : enFrames) {
+                enemyAnim.addFrame(i, ANI_RATE);
+            }
 
             ENEMY_BOUNDARY = screenWidth;
             ME_BOUNDARY = 0;
+            // Set middle boundary
+            MIDDLE_BOUNDARY = screenWidth / 2 - (characterA.getWidth());
         }
 
         // current frame
@@ -164,7 +192,7 @@ public class GameScreen extends Screen {
         for (int i = 0; i < len; i++) {
             Input.TouchEvent event = touchEvents.get(i);
 
-            // me moveX
+            // ========== TOUCH DOWN Event
             if (event.type == Input.TouchEvent.TOUCH_DOWN) {
                 isHolding = true;
 
@@ -196,7 +224,7 @@ public class GameScreen extends Screen {
                 }
             }
 
-            // me stop moveX
+            // ========== TOUCH UP Event ==========
             if (event.type == Input.TouchEvent.TOUCH_UP) {
                 isHolding = false;
 

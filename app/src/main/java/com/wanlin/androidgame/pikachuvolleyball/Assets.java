@@ -13,7 +13,7 @@ import com.kilobolt.framework.Music;
 
 public class Assets {
     public static Image menuBgImage, gameBgImage, loadingBgImage;
-    public static Image characterA, characterB;
+    public static Image characterA, characterB, characterAA, characterBB, characterAM, characterBM;
     public static Image startButton, makeDiscoverableBt, findDevicesBt;
     public static Music bgMusic, shortKimisa;
 }
