@@ -10,6 +10,8 @@ public interface Graphics {
 
 	public Image newImage(String fileName, ImageFormat format);
 
+	public Image newImage(String fileName, ImageFormat format, int newWidth, int newHdight);
+
 	public void clearScreen(int color);
 
 	public void drawLine(int x, int y, int x2, int y2, int color);
