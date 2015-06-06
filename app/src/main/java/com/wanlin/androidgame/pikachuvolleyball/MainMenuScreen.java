@@ -3,6 +3,7 @@ package com.wanlin.androidgame.pikachuvolleyball;
 import android.bluetooth.BluetoothDevice;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.util.Log;
 
 import com.kilobolt.framework.Game;
@@ -20,12 +21,16 @@ public class MainMenuScreen extends Screen {
     private static String bluetoothMsg = "Hello!";
     private static final int textSize = 50;
     Paint paint;
+    Point screenSizePoint;
 
     public MainMenuScreen(Game game) {
         super(game);
 
+        // Get Point for screen size
+        screenSizePoint = ((PikachuVolleyball)game).getSizePoint();
+
         Graphics g = game.getGraphics();
-        Assets.menuBgImage = g.newImage("menuBgImage.jpg", Graphics.ImageFormat.RGB565);
+        Assets.menuBgImage = g.newImage("menuBgImage.jpg", Graphics.ImageFormat.RGB565, screenSizePoint.x, screenSizePoint.y);
         Assets.startButton = g.newImage("start-button.png", Graphics.ImageFormat.RGB565);
 
         Assets.bgMusic = game.getAudio().createMusic("kimisa.mp3");
@@ -58,8 +63,8 @@ public class MainMenuScreen extends Screen {
 
 
                 if (bluetoothMsg == "Successful MSG") {
-                    if (inBounds(event, (1280 - Assets.startButton.getWidth()) / 2,
-                            (720 - Assets.startButton.getHeight()) / 2,
+                    if (inBounds(event, (screenSizePoint.x - Assets.startButton.getWidth()) / 2,
+                            (screenSizePoint.y - Assets.startButton.getHeight()) / 2,
                             Assets.startButton.getWidth(),
                             Assets.startButton.getHeight())) {
                         //START GAME
@@ -70,7 +75,7 @@ public class MainMenuScreen extends Screen {
 
                 else if(bluetoothMsg == "FIND DEVICES") {
                     for (int j = 0; j < ((PikachuVolleyball) game).getFoundDevices().size(); j++) {
-                        if (inBounds(event, (1280 - Assets.startButton.getWidth()) / 2,
+                        if (inBounds(event, (screenSizePoint.x - Assets.startButton.getWidth()) / 2,
                                 j*Assets.startButton.getHeight(),
                                 Assets.startButton.getWidth(), Assets.startButton.getHeight())) {
                             BluetoothDevice btDevice = ((PikachuVolleyball) game).getFoundDevices().get(j);
@@ -140,20 +145,20 @@ public class MainMenuScreen extends Screen {
 
         if (bluetoothMsg == "Successful MSG"){
             g.drawImage(Assets.startButton,
-                    (1280 - Assets.startButton.getWidth())/2,
-                    (720 - Assets.startButton.getHeight())/2);
+                    (screenSizePoint.x - Assets.startButton.getWidth())/2,
+                    (screenSizePoint.y - Assets.startButton.getHeight())/2);
         }
 
         else if (bluetoothMsg == "FIND DEVICES") {
             for (int i = 0; i < ((PikachuVolleyball) game).getFoundDevices().size(); i++) {
                 BluetoothDevice btDevice = ((PikachuVolleyball) game).getFoundDevices().get(i);
-                g.drawString(btDevice.getName() + " " + btDevice.getAddress(), 1280 / 2, (textSize + 30) * (i + 1), paint);
+                g.drawString(btDevice.getName() + " " + btDevice.getAddress(), screenSizePoint.x / 2, (textSize + 30) * (i + 1), paint);
             }
         }
 
         else {
             g.drawARGB(155, 0, 0, 0);
-            g.drawString(bluetoothMsg, 1280 / 2, 0, paint);
+            g.drawString(bluetoothMsg, screenSizePoint.x / 2, 0, paint);
         }
 
 //        Assets.bgMusic.play();

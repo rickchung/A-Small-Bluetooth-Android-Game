@@ -1,5 +1,7 @@
 package com.wanlin.androidgame.pikachuvolleyball;
 
+import android.graphics.Point;
+
 import com.kilobolt.framework.Game;
 import com.kilobolt.framework.Graphics;
 import com.kilobolt.framework.Screen;
@@ -15,8 +17,15 @@ import com.kilobolt.framework.Screen;
  * The backButton() method (which is called when the user presses the back button in the game).
  */
 public class LoadingScreen extends Screen {
+
+    Point screenSizePoint;
+    int screenWidth, screenHeight;
+
     public LoadingScreen(Game game) {
         super(game);
+        screenSizePoint = ((PikachuVolleyball) game).getSizePoint();
+        screenWidth = screenSizePoint.x;
+        screenHeight = screenSizePoint.y;
     }
 
     /**
@@ -33,8 +42,8 @@ public class LoadingScreen extends Screen {
         Graphics g = game.getGraphics();
 
         //set background Image
-        Assets.loadingBgImage = g.newImage("loadingBgImage.jpg", Graphics.ImageFormat.RGB565);
-        Assets.gameBgImage = g.newImage("gameBgImage.png", Graphics.ImageFormat.RGB565);
+        Assets.loadingBgImage = g.newImage("loadingBgImage.jpg", Graphics.ImageFormat.RGB565, screenWidth, screenHeight);
+        Assets.gameBgImage = g.newImage("gameBgImage.png", Graphics.ImageFormat.RGB565, screenWidth, screenHeight);
         Assets.characterA = g.newImage("meImage.png", Graphics.ImageFormat.ARGB4444);
         Assets.characterB = g.newImage("enemyImage.png", Graphics.ImageFormat.ARGB4444);
 

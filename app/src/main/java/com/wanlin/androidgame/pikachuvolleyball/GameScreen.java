@@ -2,6 +2,7 @@ package com.wanlin.androidgame.pikachuvolleyball;
 
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 
 import com.kilobolt.framework.Game;
 import com.kilobolt.framework.Graphics;
@@ -53,12 +54,19 @@ public class GameScreen extends Screen {
     public GameScreen(Game game) {
         super(game);
 
+        // Set screen size
+        Point screenSizePoint = ((PikachuVolleyball) game).getSizePoint();
+        screenWidth = screenSizePoint.x;
+        screenHeight = screenSizePoint.y;
+
         // Initialize game objects here
         if ( ((PikachuVolleyball) game).isHost() ) {
             characterA = Assets.characterA;
             characterB = Assets.characterB;
+
             me = new Pikachu(screenWidth - characterA.getWidth(), screenHeight - characterA.getHeight());
             enemy = new Pikachu(0, screenHeight - characterB.getHeight());
+
             // create an animation and add two characterA and characterB into the frame
             meAnim = new Animation();
             meAnim.addFrame(characterA, 50);
@@ -68,8 +76,10 @@ public class GameScreen extends Screen {
         else {
             characterA = Assets.characterB;
             characterB = Assets.characterA;
+
             me = new Pikachu(0, screenHeight - characterB.getHeight());
             enemy = new Pikachu(screenWidth - characterA.getWidth(), screenHeight - characterA.getHeight());
+
             // create an animation and add two characterA and characterB into the frame
             meAnim = new Animation();
             meAnim.addFrame(characterB, 50);
@@ -80,9 +90,6 @@ public class GameScreen extends Screen {
         // current frame
         currentSpriteA = meAnim.getImage();
         currentSpriteB = enemyAnim.getImage();
-
-
-
 
         // Defining a paint object
         paint = new Paint();
@@ -262,10 +269,8 @@ public class GameScreen extends Screen {
         // First draw the game elements.
         g.drawImage(Assets.gameBgImage, 0, 0);
 
-        g.drawImage(currentSpriteA, me.getCenterX(),
-                me.getCenterY());
-        g.drawImage(currentSpriteB, enemy.getCenterX(),
-                enemy.getCenterY());
+        g.drawImage(currentSpriteA, me.getCenterX(), me.getCenterY());
+        g.drawImage(currentSpriteB, enemy.getCenterX(), enemy.getCenterY());
 
         // Secondly, draw the UI above the game elements.
         if (state == GameState.Ready)
@@ -301,8 +306,8 @@ public class GameScreen extends Screen {
         Graphics g = game.getGraphics();
 
         g.drawARGB(155, 0, 0, 0);
-        g.drawString("Tap to Start!",
-                640, 300, paint);
+        g.drawString("Tap to Start!", screenWidth/2, screenHeight/2, paint);
+        // g.drawString("Tap to Start!", 640, 300, paint);
 
     }
 
