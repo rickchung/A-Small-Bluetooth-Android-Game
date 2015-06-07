@@ -103,11 +103,19 @@ public class GameScreen extends Screen {
             ME_BOUNDARY = screenWidth;
             MIDDLE_BOUNDARY = screenWidth / 2;
 
-            me = new Pikachu(screenWidth - characterA.getWidth(),
+            me = new Pikachu(
+                    screenWidth / 2 + 400,
                     screenHeight - characterA.getHeight() - 130, screenSizePoint,
                     ME_BOUNDARY, MIDDLE_BOUNDARY);
-            enemy = new Pikachu(0, screenHeight - characterB.getHeight() - 130, screenSizePoint,
+            enemy = new Pikachu(
+                    screenWidth / 2 - 400 - characterB.getWidth(),
+                    screenHeight - characterB.getHeight() - 130, screenSizePoint,
                     ENEMY_BOUNDARY, MIDDLE_BOUNDARY);
+//            me = new Pikachu(screenWidth - characterA.getWidth(),
+//                    screenHeight - characterA.getHeight() - 130, screenSizePoint,
+//                    ME_BOUNDARY, MIDDLE_BOUNDARY);
+//            enemy = new Pikachu(0, screenHeight - characterB.getHeight() - 130, screenSizePoint,
+//                    ENEMY_BOUNDARY, MIDDLE_BOUNDARY);
 
             // Normal frame for me
             meAnim = new Animation();
@@ -143,10 +151,18 @@ public class GameScreen extends Screen {
             ENEMY_BOUNDARY = screenWidth;
             MIDDLE_BOUNDARY = screenWidth / 2 - (characterA.getWidth());
 
-            me = new Pikachu(0, screenHeight - characterB.getHeight() - 130, screenSizePoint,
+            me = new Pikachu(
+                    screenWidth / 2 - 400 - characterB.getWidth(),
+                    screenHeight - characterB.getHeight() - 130, screenSizePoint,
                     ME_BOUNDARY, MIDDLE_BOUNDARY);
-            enemy = new Pikachu(screenWidth - characterA.getWidth(), screenHeight - characterA.getHeight() - 130, screenSizePoint,
+            enemy = new Pikachu(
+                    screenWidth / 2 + 400,
+                    screenHeight - characterA.getHeight() - 130, screenSizePoint,
                     ENEMY_BOUNDARY, MIDDLE_BOUNDARY);
+//            me = new Pikachu(0, screenHeight - characterB.getHeight() - 130, screenSizePoint,
+//                    ME_BOUNDARY, MIDDLE_BOUNDARY);
+//            enemy = new Pikachu(screenWidth - characterA.getWidth(), screenHeight - characterA.getHeight() - 130, screenSizePoint,
+//                    ENEMY_BOUNDARY, MIDDLE_BOUNDARY);
 
             // create an animation and add two characterA and characterB into the frame
             meAnim = new Animation();
@@ -269,7 +285,7 @@ public class GameScreen extends Screen {
 
             if (touchDownY != 0 && event.type == Input.TouchEvent.TOUCH_DRAGGED) {
                 if (!me.isJumped()) {
-                    if (event.y - touchDownY < 0) {
+                    if (event.y - touchDownY < -100) {
                         triggerJump = true;
                         me.handleAction(JUMP);
                     }
