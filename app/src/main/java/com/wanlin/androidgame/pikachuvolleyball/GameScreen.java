@@ -25,11 +25,17 @@ public class GameScreen extends Screen {
 
     GameState state = GameState.Ready;
     private static Pikachu me, enemy;
-    private Image characterA, characterB, characterAA, characterBB, characterBM, characterAM,
+    private Image characterA, characterB, characterAA,
+            characterBB, characterBM, characterAM,
             volleyball, currentSpriteA, currentSpriteB;
     private Image cJumpA, cJumpAM, cJumpAA, cJumpB, cJumpBM, cJumpBB;
     private static int screenWidth;
     private static int screenHeight;
+    private static int otherScreenWidth;
+    private static int otherScreenHeight;
+    private boolean otherSizeIsSet = false;
+    private static float screenWidthConvRatio;
+    private static float screenHeightConvRatio;
     private static int pauseHeight = 300;
     public static int MIDDLE_BOUNDARY;
     public static int ME_BOUNDARY;
@@ -41,6 +47,7 @@ public class GameScreen extends Screen {
     public static final int PAUSE_GAME = 0;
     public static final int YOU_GOOD_TO_GO = 312849;
     public static final int START_THAT_FUKING_GAMEEEE = 12345;
+    public static final String SCREEN_SIZE_KEY = "screensizekey";
     public final int MOVE_LEFT = 1;
     public final int MOVE_RIGHT = 2;
     public final int STOP_LEFT = 3;
@@ -68,6 +75,9 @@ public class GameScreen extends Screen {
     public GameScreen(Game game) {
         super(game);
         this.game = game;
+
+        // Get Bluetooth module
+        bluetoothModule = ((PikachuVolleyball) game).getBtModule();
         init();
     }
 
@@ -201,9 +211,6 @@ public class GameScreen extends Screen {
         paint.setTextAlign(Paint.Align.CENTER);
         paint.setAntiAlias(true);
         paint.setColor(Color.WHITE);
-
-        // Get Bluetooth module
-        bluetoothModule = ((PikachuVolleyball) game).getBtModule();
     }
 
     @Override
@@ -221,6 +228,18 @@ public class GameScreen extends Screen {
     }
 
     private void updateReady(List<Input.TouchEvent> touchEvents) {
+        if (!otherSizeIsSet) {
+            // Send my screen width
+            bluetoothModule.sendMessage( String.format("%s %d %d",
+                    SCREEN_SIZE_KEY, screenWidth, screenHeight));
+
+            // Set other screen size
+            setOtherScreenSize(
+                    ((PikachuVolleyball) game).getOhterScreenWidth(),
+                    ((PikachuVolleyball) game).getOtherScreenHeight()
+            );
+            otherSizeIsSet = true;
+        }
         if (touchEvents.size() > 0) {
             stargGame();
             bluetoothModule.sendMessage(String.valueOf(START_THAT_FUKING_GAMEEEE));
@@ -328,8 +347,10 @@ public class GameScreen extends Screen {
         animate();
 
         // Send me position
-        bluetoothModule.sendMessage(String.valueOf(
-                String.format("%d %d %s", me.getCenterX(), me.getCenterY(), String.valueOf(triggerJump) )
+        bluetoothModule.sendMessage(String.valueOf( String.format("%d %d %s",
+                        (int) (me.getCenterX() * screenWidthConvRatio),
+                        me.getCenterY(),
+                        String.valueOf(triggerJump))
         ));
     }
 
@@ -480,4 +501,11 @@ public class GameScreen extends Screen {
     }
 
     public void endGame() { state = GameState.GameOver; }
+
+    public void setOtherScreenSize(int width, int height) {
+        otherScreenWidth = width;
+        otherScreenHeight = height;
+        screenWidthConvRatio = otherScreenWidth / screenWidth;
+        screenHeightConvRatio = otherScreenHeight / screenHeight;
+    }
 }

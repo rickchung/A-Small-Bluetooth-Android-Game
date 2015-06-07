@@ -35,6 +35,9 @@ public class PikachuVolleyball extends AndroidGame implements HandlerMessageCall
     private int currentSreentType;
     private boolean isHost = true;
 
+    private static int otherScreenWidth;
+    private static int otherScreenHeight;
+
     private BluetoothModule btModule;
     private BluetoothModule.BtListAdapter btDevicesListAdapter;
 
@@ -134,6 +137,7 @@ public class PikachuVolleyball extends AndroidGame implements HandlerMessageCall
             case BluetoothModule.RECEIVER_THREAD_WHAT:
                 strMsg = msg.getData().getString(BluetoothModule.RECEIVER_MSG_KEY);
                 Log.d(LOG_TAG, "Got message: " + strMsg);
+
                 if (getCurScreenType() == TYPE_SCREEN_GAME) {
                     try {
                         int controlCmd = Integer.parseInt(strMsg);
@@ -154,12 +158,23 @@ public class PikachuVolleyball extends AndroidGame implements HandlerMessageCall
                         }
                     }
                     catch (NumberFormatException e) {
-                        // "x y isjumped"
                         String[] tmp = strMsg.split(" ");
-                        int x = Integer.parseInt(tmp[0]);
-                        int y = Integer.parseInt(tmp[1]);
-                        boolean jumped = Boolean.parseBoolean(tmp[2]);
-                        ((GameScreen) getCurrentScreen()).getEnemy().setPosition(x, y, jumped);
+
+                        // "x y isjumped"
+                        if (!tmp[0].equals(GameScreen.SCREEN_SIZE_KEY)) {
+                            int x = Integer.parseInt(tmp[0]);
+                            int y = Integer.parseInt(tmp[1]);
+                            boolean jumped = Boolean.parseBoolean(tmp[2]);
+                            ((GameScreen) getCurrentScreen()).getEnemy().setPosition(x, y, jumped);
+                        }
+                        // "screensize otherScreenWidth otherScreenHeight"
+                        else {
+                            int osw = Integer.parseInt(tmp[1]);
+                            int osh = Integer.parseInt(tmp[2]);
+
+                            otherScreenWidth = osw;
+                            otherScreenHeight = osh;
+                        }
                     }
                 }
                 break;
@@ -210,5 +225,12 @@ public class PikachuVolleyball extends AndroidGame implements HandlerMessageCall
                 }
                 break;
         }
+    }
+
+    public int getOhterScreenWidth() {
+        return otherScreenWidth;
+    }
+    public int getOtherScreenHeight() {
+        return otherScreenHeight;
     }
 }
