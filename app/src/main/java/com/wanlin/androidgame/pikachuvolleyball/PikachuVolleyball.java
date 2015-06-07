@@ -135,24 +135,31 @@ public class PikachuVolleyball extends AndroidGame implements HandlerMessageCall
                 strMsg = msg.getData().getString(BluetoothModule.RECEIVER_MSG_KEY);
                 Log.d(LOG_TAG, "Got message: " + strMsg);
                 if (getCurScreenType() == TYPE_SCREEN_GAME) {
-                    int controlCmd = Integer.parseInt(strMsg);
-                    if (controlCmd == GameScreen.STOP_MOVING) {
-                        getCurrentScreen().pause();
-                    }
-                    else if (controlCmd == GameScreen.YOU_GOOD_TO_GO) {
-                        getCurrentScreen().resume();
-                    }
-                    else if (controlCmd == GameScreen.START_THAT_FUKING_GAMEEEE) {
-                        try {
-                            ((GameScreen) getCurrentScreen()).stargGame();
+                    try {
+                        int controlCmd = Integer.parseInt(strMsg);
+
+                        if (controlCmd == GameScreen.PAUSE_GAME) {
+                            getCurrentScreen().pause();
+                        } else if (controlCmd == GameScreen.YOU_GOOD_TO_GO) {
+                            getCurrentScreen().resume();
+                        } else if (controlCmd == GameScreen.START_THAT_FUKING_GAMEEEE) {
+                            try {
+                                ((GameScreen) getCurrentScreen()).stargGame();
+                            } catch (ClassCastException e) {
+                            }
+                        } else if (controlCmd == GameScreen.YOU_ARE_LOSE) {
+                            ((GameScreen) getCurrentScreen()).endGame();
+                        } else {
+                            ((GameScreen) getCurrentScreen()).getEnemy().handleAction(controlCmd);
                         }
-                        catch (ClassCastException e) {}
                     }
-                    else if (controlCmd == GameScreen.YOU_ARE_LOSE) {
-                        ((GameScreen) getCurrentScreen()).endGame();
-                    }
-                    else {
-                        ((GameScreen) getCurrentScreen()).getEnemy().handleAction(controlCmd);
+                    catch (NumberFormatException e) {
+                        // "x y isjumped"
+                        String[] tmp = strMsg.split(" ");
+                        int x = Integer.parseInt(tmp[0]);
+                        int y = Integer.parseInt(tmp[1]);
+                        boolean jumped = Boolean.parseBoolean(tmp[2]);
+                        ((GameScreen) getCurrentScreen()).getEnemy().setPosition(x, y, jumped);
                     }
                 }
                 break;

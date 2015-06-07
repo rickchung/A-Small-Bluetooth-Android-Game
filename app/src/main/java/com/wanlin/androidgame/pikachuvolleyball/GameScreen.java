@@ -38,7 +38,7 @@ public class GameScreen extends Screen {
     private Animation enemyAnim, enemyJumpAnim;
     private int score = 0;
 
-    public static final int STOP_MOVING = 0;
+    public static final int PAUSE_GAME = 0;
     public static final int YOU_GOOD_TO_GO = 312849;
     public static final int START_THAT_FUKING_GAMEEEE = 12345;
     public final int MOVE_LEFT = 1;
@@ -233,25 +233,21 @@ public class GameScreen extends Screen {
                     if (isMoving) {
                         isMoving = false;
                         me.handleAction(STOP_LEFT);
-                        bluetoothModule.sendMessage(String.valueOf(STOP_LEFT));
                         me.handleAction(STOP_RIGHT);
-                        bluetoothModule.sendMessage(String.valueOf(STOP_RIGHT));
                     }
-                    bluetoothModule.sendMessage(String.valueOf(STOP_MOVING));
+                    bluetoothModule.sendMessage(String.valueOf(PAUSE_GAME));
                     pause();
                 }
                 // Movd left
                 if (inBounds(event, 0, pauseHeight, screenWidth / 2, screenHeight - pauseHeight)) {
                     // Move left
                     me.handleAction(MOVE_LEFT);
-                    bluetoothModule.sendMessage(String.valueOf(MOVE_LEFT));
                     isMoving = true;
                 }
                 // Move right
                 else if (inBounds(event, screenWidth / 2, pauseHeight, screenWidth / 2, screenHeight - pauseHeight)) {
                     // Move right
                     me.handleAction(MOVE_RIGHT);
-                    bluetoothModule.sendMessage(String.valueOf(MOVE_RIGHT));
                     isMoving = true;
                 }
 
@@ -266,16 +262,13 @@ public class GameScreen extends Screen {
                 if (isMoving) {
                     isMoving = false;
                     me.handleAction(STOP_LEFT);
-                    bluetoothModule.sendMessage(String.valueOf(STOP_LEFT));
                     me.handleAction(STOP_RIGHT);
-                    bluetoothModule.sendMessage(String.valueOf(STOP_RIGHT));
                 }
             }
 
             if (touchDownY != 0 && event.type == Input.TouchEvent.TOUCH_DRAGGED) {
                 if (event.y - touchDownY < 0) {
                     me.handleAction(JUMP);
-                    bluetoothModule.sendMessage(String.valueOf(JUMP));
                 }
             }
         }
@@ -306,13 +299,18 @@ public class GameScreen extends Screen {
         // Me update
         me.update();
         if (me.isJumped()) currentSpriteA = meJumpAnim.getImage();
-        else currentSpriteA = meAnim.getImage();
+        else               currentSpriteA = meAnim.getImage();
         // Enemy update
         enemy.update();
-        if (enemy.isJumped()) currentSpriteB = enemyJumpAnim.getImage();
-        else currentSpriteB = enemyAnim.getImage();
+        if (enemy.isJumped())   currentSpriteB = enemyJumpAnim.getImage();
+        else                    currentSpriteB = enemyAnim.getImage();
 
         animate();
+
+        // Send me position
+        bluetoothModule.sendMessage(String.valueOf(
+                String.format("%d %d %s", me.getCenterX(), me.getCenterY(), String.valueOf(me.isJumped()) )
+        ));
     }
 
     private void updatePaused(List<Input.TouchEvent> touchEvents) {

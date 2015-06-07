@@ -142,6 +142,12 @@ public class Pikachu {
         return centerY;
     }
 
+    public void setPosition(int x, int y, boolean isJumped) {
+        centerX = x;
+        centerY = y;
+        this.jumped = isJumped;
+    }
+
     public void handleAction(final int action) {
         switch (action) {
             case PAUSE:
