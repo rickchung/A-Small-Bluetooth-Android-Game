@@ -212,6 +212,7 @@ public class GameScreen extends Screen {
     }
 
     private void updateRunning(List<Input.TouchEvent> touchEvents, float deltaTime) {
+        boolean triggerJump = false;
         int len = touchEvents.size();
         if (isMoving && Math.abs(me.getCenterX() - ME_BOUNDARY) > MIDDLE_BOUNDARY) {
             isMoving = false;
@@ -267,8 +268,11 @@ public class GameScreen extends Screen {
             }
 
             if (touchDownY != 0 && event.type == Input.TouchEvent.TOUCH_DRAGGED) {
-                if (event.y - touchDownY < 0) {
-                    me.handleAction(JUMP);
+                if (!me.isJumped()) {
+                    if (event.y - touchDownY < 0) {
+                        triggerJump = true;
+                        me.handleAction(JUMP);
+                    }
                 }
             }
         }
@@ -302,14 +306,14 @@ public class GameScreen extends Screen {
         else               currentSpriteA = meAnim.getImage();
         // Enemy update
         enemy.update();
-        if (enemy.isJumped())   currentSpriteB = enemyJumpAnim.getImage();
-        else                    currentSpriteB = enemyAnim.getImage();
+        if (!enemy.isOnTheGround())   currentSpriteB = enemyJumpAnim.getImage();
+        else                         currentSpriteB = enemyAnim.getImage();
 
         animate();
 
         // Send me position
         bluetoothModule.sendMessage(String.valueOf(
-                String.format("%d %d %s", me.getCenterX(), me.getCenterY(), String.valueOf(me.isJumped()) )
+                String.format("%d %d %s", me.getCenterX(), me.getCenterY(), String.valueOf(triggerJump) )
         ));
     }
 

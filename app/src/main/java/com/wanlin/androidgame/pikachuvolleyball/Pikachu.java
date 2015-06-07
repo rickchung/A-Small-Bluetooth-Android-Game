@@ -45,6 +45,7 @@ public class Pikachu {
         screenDensityRatioY = sizePoint.y / NUM_MOVING_SLOTS;
         this.selfBound = selfBound;
         this.middleBound = middleBlound;
+        jumped = false;
     }
 
     public void update() {
@@ -55,12 +56,11 @@ public class Pikachu {
             centerX += speedX;
         }
 
-        if (isJumped()) {
+        if (jumped) {
             // Updates Y Position
             centerY += speedY;
             speedY += 4;
         }
-
         if (centerY >= jumpStartY) {
             jumped = false;
             speedY = 0;
@@ -130,6 +130,11 @@ public class Pikachu {
         return jumped;
     }
 
+    public boolean isOnTheGround() {
+        if (centerY >= jumpStartY) return true;
+        else return false;
+    }
+
     public void setJumped(boolean jumped) {
         this.jumped = jumped;
     }
@@ -146,6 +151,9 @@ public class Pikachu {
         centerX = x;
         centerY = y;
         this.jumped = isJumped;
+        if (isJumped) {
+            jumpStartY = centerY;
+        }
     }
 
     public void handleAction(final int action) {
