@@ -174,6 +174,7 @@ public class PikachuVolleyball extends AndroidGame implements HandlerMessageCall
 
                             otherScreenWidth = osw;
                             otherScreenHeight = osh;
+                            ((GameScreen) getCurrentScreen()).setOtherScreenSize(osw, osh);
                         }
                     }
                 }

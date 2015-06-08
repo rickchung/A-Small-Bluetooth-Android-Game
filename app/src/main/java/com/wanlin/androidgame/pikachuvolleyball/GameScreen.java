@@ -121,11 +121,6 @@ public class GameScreen extends Screen {
                     screenWidth / 2 - 400 - characterB.getWidth(),
                     screenHeight - characterB.getHeight() - 130, screenSizePoint,
                     ENEMY_BOUNDARY, MIDDLE_BOUNDARY);
-//            me = new Pikachu(screenWidth - characterA.getWidth(),
-//                    screenHeight - characterA.getHeight() - 130, screenSizePoint,
-//                    ME_BOUNDARY, MIDDLE_BOUNDARY);
-//            enemy = new Pikachu(0, screenHeight - characterB.getHeight() - 130, screenSizePoint,
-//                    ENEMY_BOUNDARY, MIDDLE_BOUNDARY);
 
             // Normal frame for me
             meAnim = new Animation();
@@ -152,8 +147,7 @@ public class GameScreen extends Screen {
             for (Image i : enemyJumpFrames) {
                 enemyJumpAnim.addFrame(i, ANI_RATE);
             }
-        }
-        else {
+        } else {
             // I'm at the left
 
             // Set bound
@@ -169,10 +163,6 @@ public class GameScreen extends Screen {
                     screenWidth / 2 + 400,
                     screenHeight - characterA.getHeight() - 130, screenSizePoint,
                     ENEMY_BOUNDARY, MIDDLE_BOUNDARY);
-//            me = new Pikachu(0, screenHeight - characterB.getHeight() - 130, screenSizePoint,
-//                    ME_BOUNDARY, MIDDLE_BOUNDARY);
-//            enemy = new Pikachu(screenWidth - characterA.getWidth(), screenHeight - characterA.getHeight() - 130, screenSizePoint,
-//                    ENEMY_BOUNDARY, MIDDLE_BOUNDARY);
 
             // create an animation and add two characterA and characterB into the frame
             meAnim = new Animation();
@@ -230,19 +220,15 @@ public class GameScreen extends Screen {
     private void updateReady(List<Input.TouchEvent> touchEvents) {
         if (!otherSizeIsSet) {
             // Send my screen width
-            bluetoothModule.sendMessage( String.format("%s %d %d",
+            bluetoothModule.sendMessage(String.format("%s %d %d",
                     SCREEN_SIZE_KEY, screenWidth, screenHeight));
-
-            // Set other screen size
-            setOtherScreenSize(
-                    ((PikachuVolleyball) game).getOhterScreenWidth(),
-                    ((PikachuVolleyball) game).getOtherScreenHeight()
-            );
             otherSizeIsSet = true;
         }
-        if (touchEvents.size() > 0) {
-            stargGame();
-            bluetoothModule.sendMessage(String.valueOf(START_THAT_FUKING_GAMEEEE));
+        else {
+            if (touchEvents.size() > 0) {
+                stargGame();
+                bluetoothModule.sendMessage(String.valueOf(START_THAT_FUKING_GAMEEEE));
+            }
         }
     }
 
@@ -318,7 +304,7 @@ public class GameScreen extends Screen {
         }
 
         // MUSIC!
-        if (Math.abs(me.getCenterX()-enemy.getCenterX()) < 280) {
+        if (Math.abs(me.getCenterX() - enemy.getCenterX()) < 280) {
             if (!musicIsPlaying) {
                 musicIsPlaying = true;
                 Assets.shortKimisa = game.getAudio().createMusic("short_kimisa.mp3");
@@ -327,8 +313,7 @@ public class GameScreen extends Screen {
                 isWin = true;
                 endGame();
             }
-        }
-        else {
+        } else {
             if (musicIsPlaying) {
                 musicIsPlaying = false;
                 Assets.shortKimisa.dispose();
@@ -338,16 +323,16 @@ public class GameScreen extends Screen {
         // Me update
         me.update();
         if (me.isJumped()) currentSpriteA = meJumpAnim.getImage();
-        else               currentSpriteA = meAnim.getImage();
+        else currentSpriteA = meAnim.getImage();
         // Enemy update
         enemy.update();
-        if (!enemy.isOnTheGround())   currentSpriteB = enemyJumpAnim.getImage();
-        else                         currentSpriteB = enemyAnim.getImage();
+        if (!enemy.isOnTheGround()) currentSpriteB = enemyJumpAnim.getImage();
+        else currentSpriteB = enemyAnim.getImage();
 
         animate();
 
         // Send me position
-        bluetoothModule.sendMessage(String.valueOf( String.format("%d %d %s",
+        bluetoothModule.sendMessage(String.valueOf(String.format("%d %d %s",
                         (int) (me.getCenterX() * screenWidthConvRatio),
                         me.getCenterY(),
                         String.valueOf(triggerJump))
@@ -441,8 +426,7 @@ public class GameScreen extends Screen {
             g.drawImage(Assets.gameoverImage, 0, 0);
             g.drawImage(currentSpriteA, me.getCenterX(), me.getCenterY());
             g.drawImage(currentSpriteB, enemy.getCenterX(), enemy.getCenterY());
-        }
-        else
+        } else
             g.drawImage(Assets.loserImage, 0, 0);
 
     }
@@ -500,7 +484,9 @@ public class GameScreen extends Screen {
         state = GameState.Running;
     }
 
-    public void endGame() { state = GameState.GameOver; }
+    public void endGame() {
+        state = GameState.GameOver;
+    }
 
     public void setOtherScreenSize(int width, int height) {
         otherScreenWidth = width;
