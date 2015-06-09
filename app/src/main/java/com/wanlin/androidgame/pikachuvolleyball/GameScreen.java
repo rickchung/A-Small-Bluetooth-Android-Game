@@ -43,7 +43,6 @@ public class GameScreen extends Screen {
     private Animation meAnim, meJumpAnim;
     private Animation enemyAnim, enemyJumpAnim;
     private int score = 0;
-
     public static final int PAUSE_GAME = 0;
     public static final int YOU_GOOD_TO_GO = 312849;
     public static final int START_THAT_FUKING_GAMEEEE = 12345;
@@ -61,16 +60,13 @@ public class GameScreen extends Screen {
     private final int ANI_RATE = 150;
     private int touchDownY;
     private boolean musicIsPlaying = false;
-
     private BluetoothModule bluetoothModule;
-
     private boolean isWin = false;
-
     private Game game;
-
     int targetScore = 15;
     Paint paint;
     float densityRatio;
+
 
     public GameScreen(Game game) {
         super(game);
@@ -107,7 +103,6 @@ public class GameScreen extends Screen {
 
         if (((PikachuVolleyball) game).isHost()) {
             // I'm at the right
-
             // Set boundaries
             ENEMY_BOUNDARY = 0;
             ME_BOUNDARY = screenWidth;
