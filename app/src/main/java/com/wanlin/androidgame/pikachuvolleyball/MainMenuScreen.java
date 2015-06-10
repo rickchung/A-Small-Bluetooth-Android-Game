@@ -72,6 +72,9 @@ public class MainMenuScreen extends Screen {
                         if (inBounds(event, (screenSizePoint.x - Assets.startButton.getWidth()) / 2,
                                 j*Assets.startButton.getHeight(),
                                 Assets.startButton.getWidth(), Assets.startButton.getHeight())) {
+                            Assets.startGameBgm = game.getAudio().createMusic("start_game.mp3");
+                            Assets.startGameBgm.play();
+
                             BluetoothDevice btDevice = btdList.get(j);
                             Log.e(LOG_TAG, "touch on: " + btDevice.getName() + " " + btDevice.getAddress());
 
@@ -87,6 +90,9 @@ public class MainMenuScreen extends Screen {
                         if (inBounds(event, (screenSizePoint.x - Assets.startButton.getWidth()) / 2,
                                 j*Assets.startButton.getHeight(),
                                 Assets.startButton.getWidth(), Assets.startButton.getHeight())) {
+                            Assets.startGameBgm = game.getAudio().createMusic("start_game.mp3");
+                            Assets.startGameBgm.play();
+
                             BluetoothDevice btDevice = btdList.get(j);
                             Log.e(LOG_TAG, "touch on: " + btDevice.getName() + " " + btDevice.getAddress());
 

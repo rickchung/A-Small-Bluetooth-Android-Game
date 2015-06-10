@@ -538,6 +538,8 @@ public class GameScreen extends Screen {
             me.handleAction(PAUSE);
             enemy.handleAction(PAUSE);
             state = GameState.Paused;
+            if (Assets.playingBgm.isPlaying())
+                Assets.playingBgm.dispose();
         }
     }
 
@@ -571,6 +573,9 @@ public class GameScreen extends Screen {
     }
 
     public void stargGame() {
+        Assets.playingBgm = game.getAudio().createMusic("gameBGM.mp3");
+        Assets.playingBgm.setLooping(true);
+        Assets.playingBgm.play();
         state = GameState.Running;
     }
 

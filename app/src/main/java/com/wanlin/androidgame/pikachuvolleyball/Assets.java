@@ -17,5 +17,5 @@ public class Assets {
     public static Image cJumpA, cJumpAM, cJumpAA, cJumpB, cJumpBM, cJumpBB;
     public static Image volleyballImage;
     public static Image startButton, makeDiscoverableBt, findDevicesBt, showKnownDevicesBt;
-    public static Music bgMusic, shortKimisa;
+    public static Music bgMusic, shortKimisa, playingBgm, startGameBgm;
 }
