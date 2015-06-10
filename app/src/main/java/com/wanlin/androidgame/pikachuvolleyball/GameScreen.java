@@ -3,6 +3,7 @@ package com.wanlin.androidgame.pikachuvolleyball;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.util.Log;
 
 import com.kilobolt.framework.Game;
 import com.kilobolt.framework.Graphics;
@@ -25,8 +26,9 @@ public class GameScreen extends Screen {
 
     GameState state = GameState.Ready;
     private static Pikachu me, enemy;
+    private static Volleyball volleyball;
     private Image characterA, characterB, characterAA, characterBB, characterBM, characterAM,
-            volleyball, currentSpriteA, currentSpriteB;
+            volleyballImg, currentSpriteA, currentSpriteB, currentSpriteVolleyball;
     private Image cJumpA, cJumpAM, cJumpAA, cJumpB, cJumpBM, cJumpBB;
     private static int screenWidth;
     private static int screenHeight;
@@ -34,6 +36,7 @@ public class GameScreen extends Screen {
     public static int MIDDLE_BOUNDARY;
     public static int ME_BOUNDARY;
     public static int ENEMY_BOUNDARY;
+    public static int GROUND_BOUNDARY;
     private Animation meAnim, meJumpAnim;
     private Animation enemyAnim, enemyJumpAnim;
     private int score = 0;
@@ -68,6 +71,7 @@ public class GameScreen extends Screen {
     public GameScreen(Game game) {
         super(game);
         this.game = game;
+        volleyball = new Volleyball(150, 150);
         init();
     }
 
@@ -94,6 +98,7 @@ public class GameScreen extends Screen {
         cJumpB = Assets.cJumpB;
         cJumpBM = Assets.cJumpBM;
         cJumpBB = Assets.cJumpBB;
+        volleyballImg = Assets.volleyballImage;
 
         if (((PikachuVolleyball) game).isHost()) {
             // I'm at the right
@@ -188,6 +193,8 @@ public class GameScreen extends Screen {
                 enemyJumpAnim.addFrame(i, ANI_RATE);
             }
         }
+
+        GROUND_BOUNDARY = screenHeight - 200;
 
         // current frame
         currentSpriteA = meAnim.getImage();
@@ -293,6 +300,28 @@ public class GameScreen extends Screen {
             }
         }
 
+        if ((volleyball.getX() - volleyballImg.getWidth()/2) < 0) {
+            Log.e(LOG_TAG, "bound hotizontally");
+            volleyball.setX(1 + volleyballImg.getWidth()/2);
+            volleyball.boundHorizontally();
+        }
+        else if ((volleyball.getX() + volleyballImg.getWidth()/2) > screenWidth) {
+            Log.e(LOG_TAG, "bound vertically");
+            volleyball.setX(screenWidth -volleyballImg.getWidth()/2 - 1);
+            volleyball.boundHorizontally();
+        }
+
+        if ((volleyball.getY() + volleyballImg.getHeight()/2) > GROUND_BOUNDARY) {
+            Log.e(LOG_TAG, "bound vertically");
+            volleyball.setY(GROUND_BOUNDARY - volleyballImg.getHeight()/2 -1);
+            volleyball.boundVertically();
+        }
+        else if ((volleyball.getY() - volleyballImg.getHeight()/2) < 0) {
+            Log.e(LOG_TAG, "bound vertically");
+            volleyball.setY(1 + volleyballImg.getHeight()/2);
+            volleyball.boundVertically();
+        }
+
         // check score
         if (score == targetScore) {
             state = GameState.GameOver;
@@ -322,8 +351,11 @@ public class GameScreen extends Screen {
         else               currentSpriteA = meAnim.getImage();
         // Enemy update
         enemy.update();
-        if (!enemy.isOnTheGround())   currentSpriteB = enemyJumpAnim.getImage();
-        else                         currentSpriteB = enemyAnim.getImage();
+        if (!enemy.isOnTheGround()) currentSpriteB = enemyJumpAnim.getImage();
+        else                        currentSpriteB = enemyAnim.getImage();
+        // Volleyball update
+        volleyball.update();
+
 
         animate();
 
@@ -358,6 +390,7 @@ public class GameScreen extends Screen {
         g.drawImage(Assets.gameBgImage, 0, 0);
         g.drawImage(currentSpriteA, me.getCenterX(), me.getCenterY());
         g.drawImage(currentSpriteB, enemy.getCenterX(), enemy.getCenterY());
+        g.drawImage(volleyballImg, volleyball.getX(), volleyball.getY());
 
         // Secondly, draw the UI above the game elements.
         if (state == GameState.Ready)
@@ -435,10 +468,13 @@ public class GameScreen extends Screen {
     }
 
     public void animate() {
+        Graphics g = game.getGraphics();
+
         meAnim.update(10);
         meJumpAnim.update(30);
         enemyAnim.update(10);
         enemyJumpAnim.update(30);
+        g.drawImage(volleyballImg, volleyball.getX(), volleyball.getY());
     }
 
     @Override

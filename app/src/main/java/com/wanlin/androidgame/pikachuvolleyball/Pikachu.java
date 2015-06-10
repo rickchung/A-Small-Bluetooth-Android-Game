@@ -147,6 +147,8 @@ public class Pikachu {
         return centerY;
     }
 
+    public void setCenterX(int x) { this.centerX = x; }
+
     public void setPosition(int x, int y, boolean isJumped) {
         centerX = x;
         centerY = y;

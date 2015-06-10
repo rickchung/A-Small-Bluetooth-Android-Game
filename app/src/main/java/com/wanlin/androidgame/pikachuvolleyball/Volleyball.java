@@ -10,13 +10,14 @@ public class Volleyball {
     private int y;
     private int objWidth;
     private int objHeight;
+    private int objRadius;
     private double speedX;
     private double speedY;
 
     Volleyball(int x, int y) {
         this.x = x;
         this.y = y;
-        this.speedX = 0.0;
+        this.speedX = 5.0; // 5.0 for test
         this.speedY = 5.0;
     }
 
@@ -70,5 +71,26 @@ public class Volleyball {
 
     public void setSpeedY(double speedY) {
         this.speedY = speedY;
+    }
+
+
+    public boolean detectCollision(int x, int y, int radius) {
+        int dx = this.x - x;
+        int dy = this.y - y;
+        double distance = Math.sqrt(dx*dx + dy*dy);
+
+        if (distance < this.objRadius + radius) {
+            // Collision detected, change speed here
+            return true;
+        }
+        return false;
+    }
+
+    public void boundVertically() {
+        speedY = -speedY;
+    }
+
+    public void boundHorizontally(){
+        speedX = -speedX;
     }
 }

@@ -61,6 +61,9 @@ public class LoadingScreen extends Screen {
         Assets.cJumpBM = g.newImage("enemyJump1.5.png", Graphics.ImageFormat.ARGB4444);
         Assets.cJumpBB = g.newImage("enemyJump1.png", Graphics.ImageFormat.ARGB4444);
 
+        // set volleyball image
+        Assets.volleyballImage = g.newImage("volleyball.png", Graphics.ImageFormat.ARGB4444);
+
         // set button image
         Assets.startButton = g.newImage("start-button.png", Graphics.ImageFormat.RGB565);
         Assets.makeDiscoverableBt = g.newImage("make_discoverable_bt.png", Graphics.ImageFormat.RGB565);
