@@ -205,8 +205,8 @@ public class BluetoothModule {
         Message msg = new Message();
         msg.what = SYS_MSG_WHAT;
         msg.setData(msgBundle);
-
         msgHandler.sendMessage(msg);
+
         // For some reasons, try cancel first and start again
         btAdapter.cancelDiscovery();
         btAdapter.startDiscovery();
@@ -224,7 +224,6 @@ public class BluetoothModule {
         btPairedDevices = btAdapter.getBondedDevices();
         // If there are paired devices
         if (btPairedDevices.size() > 0) {
-            Log.d(LOG_TAG, "There are paired devices");
             for (BluetoothDevice device : btPairedDevices) {
                 btListAdapter.add(device);
             }

@@ -16,6 +16,6 @@ public class Assets {
     public static Image characterA, characterB, characterAA, characterBB, characterAM, characterBM;
     public static Image cJumpA, cJumpAM, cJumpAA, cJumpB, cJumpBM, cJumpBB;
     public static Image volleyballImage;
-    public static Image startButton, makeDiscoverableBt, findDevicesBt;
+    public static Image startButton, makeDiscoverableBt, findDevicesBt, showKnownDevicesBt;
     public static Music bgMusic, shortKimisa;
 }

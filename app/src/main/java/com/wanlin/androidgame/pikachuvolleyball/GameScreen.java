@@ -71,7 +71,6 @@ public class GameScreen extends Screen {
     public GameScreen(Game game) {
         super(game);
         this.game = game;
-        volleyball = new Volleyball(150, 150);
         init();
     }
 
@@ -100,9 +99,14 @@ public class GameScreen extends Screen {
         cJumpBB = Assets.cJumpBB;
         volleyballImg = Assets.volleyballImage;
 
+        // Init test volleyball
+        volleyball = new Volleyball(150, 150);
+        volleyball.setRadius(volleyballImg.getHeight()/2);
+        volleyball.setCenterX(volleyball.getX() + volleyball.getRadius());
+        volleyball.setCenterY(volleyball.getY() + volleyball.getRadius());
+
         if (((PikachuVolleyball) game).isHost()) {
             // I'm at the right
-
             // Set boundaries
             ENEMY_BOUNDARY = 0;
             ME_BOUNDARY = screenWidth;
@@ -116,11 +120,16 @@ public class GameScreen extends Screen {
                     screenWidth / 2 - 400 - characterB.getWidth(),
                     screenHeight - characterB.getHeight() - 130, screenSizePoint,
                     ENEMY_BOUNDARY, MIDDLE_BOUNDARY);
-//            me = new Pikachu(screenWidth - characterA.getWidth(),
-//                    screenHeight - characterA.getHeight() - 130, screenSizePoint,
-//                    ME_BOUNDARY, MIDDLE_BOUNDARY);
-//            enemy = new Pikachu(0, screenHeight - characterB.getHeight() - 130, screenSizePoint,
-//                    ENEMY_BOUNDARY, MIDDLE_BOUNDARY);
+
+            // Set radius
+            me.setRadius(characterA.getHeight()/2);
+            enemy.setRadius(characterB.getHeight()/2);
+
+            // Set center X and Y
+            me.setCenterX(me.getX() + characterA.getWidth()/2);
+            me.setCenterY(me.getY() + characterA.getHeight()/2);
+            enemy.setCenterX(enemy.getX() + characterB.getWidth()/2);
+            enemy.setCenterY(enemy.getY() + characterB.getHeight()/2);
 
             // Normal frame for me
             meAnim = new Animation();
@@ -164,10 +173,16 @@ public class GameScreen extends Screen {
                     screenWidth / 2 + 400,
                     screenHeight - characterA.getHeight() - 130, screenSizePoint,
                     ENEMY_BOUNDARY, MIDDLE_BOUNDARY);
-//            me = new Pikachu(0, screenHeight - characterB.getHeight() - 130, screenSizePoint,
-//                    ME_BOUNDARY, MIDDLE_BOUNDARY);
-//            enemy = new Pikachu(screenWidth - characterA.getWidth(), screenHeight - characterA.getHeight() - 130, screenSizePoint,
-//                    ENEMY_BOUNDARY, MIDDLE_BOUNDARY);
+
+            // Set radius
+            me.setRadius(characterB.getHeight() / 2);
+            enemy.setRadius(characterA.getHeight() / 2);
+
+            // Set center X and Y
+            me.setCenterX(me.getX() + characterB.getWidth()/2);
+            me.setCenterY(me.getY() + characterB.getHeight()/2);
+            enemy.setCenterX(enemy.getX() + characterA.getWidth()/2);
+            enemy.setCenterY(enemy.getY() + characterA.getHeight()/2);
 
             // create an animation and add two characterA and characterB into the frame
             meAnim = new Animation();
@@ -237,7 +252,7 @@ public class GameScreen extends Screen {
     private void updateRunning(List<Input.TouchEvent> touchEvents, float deltaTime) {
         boolean triggerJump = false;
         int len = touchEvents.size();
-        if (isMoving && Math.abs(me.getCenterX() - ME_BOUNDARY) > MIDDLE_BOUNDARY) {
+        if (isMoving && Math.abs(me.getX() - ME_BOUNDARY) > MIDDLE_BOUNDARY) {
             isMoving = false;
             me.handleAction(STOP_LEFT);
             bluetoothModule.sendMessage(String.valueOf(STOP_LEFT));
@@ -300,6 +315,7 @@ public class GameScreen extends Screen {
             }
         }
 
+        // Volleyball rebounds at boundaries
         if ((volleyball.getX() - volleyballImg.getWidth()/2) < 0) {
             Log.e(LOG_TAG, "bound hotizontally");
             volleyball.setX(1 + volleyballImg.getWidth()/2);
@@ -310,7 +326,6 @@ public class GameScreen extends Screen {
             volleyball.setX(screenWidth -volleyballImg.getWidth()/2 - 1);
             volleyball.boundHorizontally();
         }
-
         if ((volleyball.getY() + volleyballImg.getHeight()/2) > GROUND_BOUNDARY) {
             Log.e(LOG_TAG, "bound vertically");
             volleyball.setY(GROUND_BOUNDARY - volleyballImg.getHeight()/2 -1);
@@ -322,13 +337,23 @@ public class GameScreen extends Screen {
             volleyball.boundVertically();
         }
 
+        // Chece if volleyball collides with Pikachu
+        if (volleyball.detectCollision(me.getCenterX(), me.getCenterY(), me.getRadius())) {
+            volleyball.updateSpeed(
+                    me.getCenterX(), me.getCenterY(), (int)me.getSpeedX(), (int)me.getSpeedY());
+        }
+        if (volleyball.detectCollision(enemy.getCenterX(), enemy.getCenterY(), enemy.getRadius())) {
+            volleyball.updateSpeed(
+                    enemy.getCenterX(), enemy.getCenterY(), (int)enemy.getSpeedX(), (int)enemy.getSpeedY());
+        }
+
         // check score
         if (score == targetScore) {
             state = GameState.GameOver;
         }
 
         // MUSIC!
-        if (Math.abs(me.getCenterX()-enemy.getCenterX()) < 280) {
+        if (Math.abs(me.getX()-enemy.getX()) < 280) {
             if (!musicIsPlaying) {
                 musicIsPlaying = true;
                 Assets.shortKimisa = game.getAudio().createMusic("short_kimisa.mp3");
@@ -347,21 +372,25 @@ public class GameScreen extends Screen {
 
         // Me update
         me.update();
-        if (me.isJumped()) currentSpriteA = meJumpAnim.getImage();
-        else               currentSpriteA = meAnim.getImage();
+        if (me.isJumped())
+            currentSpriteA = meJumpAnim.getImage();
+        else
+            currentSpriteA = meAnim.getImage();
         // Enemy update
         enemy.update();
-        if (!enemy.isOnTheGround()) currentSpriteB = enemyJumpAnim.getImage();
-        else                        currentSpriteB = enemyAnim.getImage();
+        if (!enemy.isOnTheGround())
+            currentSpriteB = enemyJumpAnim.getImage();
+        else
+            currentSpriteB = enemyAnim.getImage();
         // Volleyball update
         volleyball.update();
 
-
+        // For animation
         animate();
 
         // Send me position
         bluetoothModule.sendMessage(String.valueOf(
-                String.format("%d %d %s", me.getCenterX(), me.getCenterY(), String.valueOf(triggerJump) )
+                String.format("%d %d %s", me.getX(), me.getY(), String.valueOf(triggerJump) )
         ));
     }
 
@@ -388,8 +417,8 @@ public class GameScreen extends Screen {
 
         // First draw the game elements.
         g.drawImage(Assets.gameBgImage, 0, 0);
-        g.drawImage(currentSpriteA, me.getCenterX(), me.getCenterY());
-        g.drawImage(currentSpriteB, enemy.getCenterX(), enemy.getCenterY());
+        g.drawImage(currentSpriteA, me.getX(), me.getY());
+        g.drawImage(currentSpriteB, enemy.getX(), enemy.getY());
         g.drawImage(volleyballImg, volleyball.getX(), volleyball.getY());
 
         // Secondly, draw the UI above the game elements.
@@ -434,8 +463,8 @@ public class GameScreen extends Screen {
     private void drawRunningUI() {
         Graphics g = game.getGraphics();
 
-        g.drawImage(currentSpriteA, me.getCenterX(), me.getCenterY());
-        g.drawImage(currentSpriteB, enemy.getCenterX(), enemy.getCenterY());
+        g.drawImage(currentSpriteA, me.getX(), me.getY());
+        g.drawImage(currentSpriteB, enemy.getX(), enemy.getY());
         g.drawString("Pause", 200, 100, paint);
     }
 
@@ -451,8 +480,8 @@ public class GameScreen extends Screen {
         Graphics g = game.getGraphics();
         if (isWin) {
             g.drawImage(Assets.gameoverImage, 0, 0);
-            g.drawImage(currentSpriteA, me.getCenterX(), me.getCenterY());
-            g.drawImage(currentSpriteB, enemy.getCenterX(), enemy.getCenterY());
+            g.drawImage(currentSpriteA, me.getX(), me.getY());
+            g.drawImage(currentSpriteB, enemy.getX(), enemy.getY());
         }
         else
             g.drawImage(Assets.loserImage, 0, 0);

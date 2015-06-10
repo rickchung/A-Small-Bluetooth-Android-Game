@@ -11,6 +11,7 @@ import com.kilobolt.framework.Graphics;
 import com.kilobolt.framework.Input;
 import com.kilobolt.framework.Screen;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -65,7 +66,7 @@ public class MainMenuScreen extends Screen {
                     }
                 }
 
-                else if(bluetoothMsg == "FIND DEVICES") {
+                else if (bluetoothMsg == "FIND DEVICES") {
                     for (int j = 0; j < ((PikachuVolleyball) game).getFoundDevices().size(); j++) {
                         if (inBounds(event, (screenSizePoint.x - Assets.startButton.getWidth()) / 2,
                                 j*Assets.startButton.getHeight(),
@@ -79,25 +80,45 @@ public class MainMenuScreen extends Screen {
                     }
                 }
 
+                else if (bluetoothMsg == "GET KNOWN DEVICES") {
+                    ArrayList<BluetoothDevice> btdList = new ArrayList<BluetoothDevice>();
+
+                    for (int j = 0; j < btdList.size(); j++) {
+                        if (inBounds(event, (screenSizePoint.x - Assets.startButton.getWidth()) / 2,
+                                j*Assets.startButton.getHeight(),
+                                Assets.startButton.getWidth(), Assets.startButton.getHeight())) {
+                            BluetoothDevice btDevice = btdList.get(j);
+                            Log.e(LOG_TAG, "touch on: " + btDevice.getName() + " " + btDevice.getAddress());
+
+                            // Connect to the remote device
+                            ((PikachuVolleyball) game).getBtModule().btConnectAsClient(btDevice);
+                        }
+                    }
+                }
+
+                // MAKE DISCOVERABLE
                 if (inBounds(event, 0, 0, Assets.makeDiscoverableBt.getWidth(), Assets.makeDiscoverableBt.getHeight())) {
-                    // MAKE DISCOVERABLE
                     bluetoothMsg = "MAKE DISCOVERABLE";
-                    Log.e(LOG_TAG, "MAKE DISCOVERABLE");
                     ((PikachuVolleyball) game).getBtModule().btMakeDiscoverable();
                 }
 
-                if (inBounds(event, 0, 40 + Assets.findDevicesBt.getHeight(), Assets.findDevicesBt.getWidth(), Assets.findDevicesBt.getHeight())) {
-                    // FIND DEVICES
+                // FIND DEVICES
+                if (inBounds(event, 0, 40 + Assets.findDevicesBt.getHeight(),
+                        Assets.findDevicesBt.getWidth(), Assets.findDevicesBt.getHeight())) {
                     bluetoothMsg = "FIND DEVICES";
-                    Log.e(LOG_TAG, "FIND DEVICES");
                     ((PikachuVolleyball) game).getBtModule().btFindDevices();
                 }
 
-//                if (inBounds(event, 0, (20 + Assets.startButton.getHeight())*2, Assets.startButton.getWidth(), Assets.startButton.getHeight())) {
-//                    // CONNECT TO...
-//                    bluetoothMsg = "CONNECT TO...";
-//                    Log.e(LOG_TAG, "CONNECT TO...");
-//                }
+                // FIND KNOWN DEVICES
+                if (inBounds(event, 0, 200 + Assets.showKnownDevicesBt.getHeight(),
+                        Assets.showKnownDevicesBt.getWidth(), Assets.showKnownDevicesBt.getHeight())) {
+                    Graphics g = game.getGraphics();
+                    ArrayList<BluetoothDevice> btdList = ((PikachuVolleyball) game).getKnownDevices();
+                    for (int j = 0; j < btdList.size(); j++) {
+                        BluetoothDevice btDevice = (BluetoothDevice) btdList.get(j);
+                        g.drawString(btDevice.getName() + " " + btDevice.getAddress(), screenSizePoint.x / 2, (textSize + 30) * (i + 1), paint);
+                    }
+                }
             }
         }
 
@@ -121,9 +142,13 @@ public class MainMenuScreen extends Screen {
     @Override
     public void paint(float deltaTime) {
         Graphics g = game.getGraphics();
-        g.drawImage(Assets.menuBgImage, 0, 0); // Draw bg image
-        g.drawImage(Assets.makeDiscoverableBt, 0, 0); // Draw make discoverable bt image
-        g.drawImage(Assets.findDevicesBt, 0, 40 + Assets.findDevicesBt.getHeight()); // Draw find devices bt image
+        // Draw bg image
+        g.drawImage(Assets.menuBgImage, 0, 0);
+        // Draw make discoverable bt image
+        g.drawImage(Assets.makeDiscoverableBt, 0, 0);
+        // Draw find devices bt image
+        g.drawImage(Assets.findDevicesBt, 0, 40 + Assets.findDevicesBt.getHeight());
+        g.drawImage(Assets.showKnownDevicesBt, 0, 200 + Assets.showKnownDevicesBt.getHeight());
 
         if (bluetoothMsg == "Successful MSG"){
             g.drawImage(Assets.startButton,
@@ -133,14 +158,14 @@ public class MainMenuScreen extends Screen {
 
         // draw bluetooth devices string
         else if (bluetoothMsg == "FIND DEVICES") {
-            for (int i = 0; i < ((PikachuVolleyball) game).getFoundDevices().size(); i++) {
-                BluetoothDevice btDevice = ((PikachuVolleyball) game).getFoundDevices().get(i);
+            ArrayList<BluetoothDevice> btdList = ((PikachuVolleyball) game).getFoundDevices();
+            for (int i = 0; i < btdList.size(); i++) {
+                BluetoothDevice btDevice = btdList.get(i);
                 g.drawString(btDevice.getName() + " " + btDevice.getAddress(), screenSizePoint.x / 2, (textSize + 30) * (i + 1), paint);
             }
         }
 
         else {
-//            g.drawARGB(155, 0, 0, 0);
             g.drawString(bluetoothMsg, screenSizePoint.x / 2, 0, paint);
         }
     }
@@ -163,7 +188,6 @@ public class MainMenuScreen extends Screen {
     @Override
     public void backButton() {
         //Display "Exit Game?" Box
-
     }
 
     public void startGame() {

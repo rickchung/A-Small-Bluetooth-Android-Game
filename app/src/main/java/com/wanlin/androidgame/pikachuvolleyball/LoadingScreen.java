@@ -68,6 +68,7 @@ public class LoadingScreen extends Screen {
         Assets.startButton = g.newImage("start-button.png", Graphics.ImageFormat.RGB565);
         Assets.makeDiscoverableBt = g.newImage("make_discoverable_bt.png", Graphics.ImageFormat.RGB565);
         Assets.findDevicesBt = g.newImage("find_devices_bt.png", Graphics.ImageFormat.RGB565);
+        Assets.showKnownDevicesBt = g.newImage("find_devices_bt.png", Graphics.ImageFormat.RGB565);
 
         // set background music
         Assets.bgMusic = game.getAudio().createMusic("kimisa.mp3");

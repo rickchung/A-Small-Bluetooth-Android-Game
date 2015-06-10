@@ -18,34 +18,34 @@ public class Pikachu {
     public static final int STOP_BOTH = 123;
     private final int JUMP = 5;
     private final float NUM_MOVING_SLOTS = 900.0f;
-
     private boolean ducked = false;
     private boolean jumped = false;
     private boolean movingLeft = false;
     private boolean movingRight = false;
-
     private float speedX = 0;
     private float speedY = 0;
-
     private int centerX;
     private int centerY;
+    private int x;
+    private int y;
     private int jumpStartY;
-
     private float screenDensityRatioX;
     private float screenDensityRatioY;
-
     private int selfBound;
     private int middleBound;
+    private int radius;
 
 
-    Pikachu (int x, int y, Point sizePoint, int selfBound, int middleBlound) {
-        centerX = x;
-        centerY = y;
+    Pikachu(int x, int y, Point sizePoint, int selfBound, int middleBlound) {
+        this.x = x;
+        this.y = y;
         screenDensityRatioX = sizePoint.x / NUM_MOVING_SLOTS;
         screenDensityRatioY = sizePoint.y / NUM_MOVING_SLOTS;
         this.selfBound = selfBound;
         this.middleBound = middleBlound;
         jumped = false;
+        radius = 0;
+        centerY = centerX = 0;
     }
 
     public void update() {
@@ -53,15 +53,15 @@ public class Pikachu {
 
         if (isMovingRight() || isMovingLeft()) {
             // move right
-            centerX += speedX;
+            x += speedX;
         }
 
         if (jumped) {
             // Updates Y Position
-            centerY += speedY;
+            y += speedY;
             speedY += 4;
         }
-        if (centerY >= jumpStartY) {
+        if (y >= jumpStartY) {
             jumped = false;
             speedY = 0;
         }
@@ -69,7 +69,7 @@ public class Pikachu {
 
     private void jump() {
         if (jumped == false) {
-            jumpStartY = centerY;
+            jumpStartY = y;
             speedY = JUMP_SPEED * screenDensityRatioY;
             jumped = true;
         }
@@ -105,7 +105,7 @@ public class Pikachu {
         speedX = 0;
     }
 
-    private void pause(){
+    private void pause() {
         stopLeft();
         stopRight();
     }
@@ -131,7 +131,7 @@ public class Pikachu {
     }
 
     public boolean isOnTheGround() {
-        if (centerY >= jumpStartY) return true;
+        if (y >= jumpStartY) return true;
         else return false;
     }
 
@@ -139,22 +139,64 @@ public class Pikachu {
         this.jumped = jumped;
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
     public int getCenterX() {
         return centerX;
+    }
+
+    public void setCenterX(int centerX) {
+        this.centerX = centerX;
     }
 
     public int getCenterY() {
         return centerY;
     }
 
-    public void setCenterX(int x) { this.centerX = x; }
+    public void setCenterY(int centerY) {
+        this.centerY = centerY;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
+    }
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public float getSpeedX() {
+        return speedX;
+    }
+
+    public void setSpeedX(float speedX) {
+        this.speedX = speedX;
+    }
+
+    public float getSpeedY() {
+        return speedY;
+    }
+
+    public void setSpeedY(float speedY) {
+        this.speedY = speedY;
+    }
 
     public void setPosition(int x, int y, boolean isJumped) {
-        centerX = x;
-        centerY = y;
+        this.x = x;
+        this.y = y;
         this.jumped = isJumped;
         if (isJumped) {
-            jumpStartY = centerY;
+            jumpStartY = this.y;
         }
     }
 

@@ -8,9 +8,11 @@ public class Volleyball {
     private static final double GRAV_ACC = 1.0;
     private int x;
     private int y;
-    private int objWidth;
-    private int objHeight;
-    private int objRadius;
+    private int centerX;
+    private int centerY;
+    private int width;
+    private int height;
+    private int radius;
     private double speedX;
     private double speedY;
 
@@ -32,11 +34,12 @@ public class Volleyball {
         speedY += GRAV_ACC;
     }
 
-    public boolean canRebound(int x, int y, int width, int height) {
-        // Left & Right (use x and width)
-        // Up & Down (use y and height)
+    public boolean detectCollision(int x, int y, int radius) {
+        int dx = this.centerX - x;
+        int dy = this.centerY - y;
+        double distance = Math.sqrt(dx*dx + dy*dy);
 
-        return false;
+        return ( distance <= this.radius + radius );
     }
 
 
@@ -57,6 +60,22 @@ public class Volleyball {
         this.y = y;
     }
 
+    public int getCenterY() {
+        return centerY;
+    }
+
+    public void setCenterY(int centerY) {
+        this.centerY = centerY;
+    }
+
+    public int getCenterX() {
+        return centerX;
+    }
+
+    public void setCenterX(int centerX) {
+        this.centerX = centerX;
+    }
+
     public double getSpeedX() {
         return speedX;
     }
@@ -73,17 +92,18 @@ public class Volleyball {
         this.speedY = speedY;
     }
 
+    public void updateSpeed(int x, int y, int speedX, int speedY) {
+        // TODO For test here
+        boundHorizontally();
+        boundVertically();
+    }
 
-    public boolean detectCollision(int x, int y, int radius) {
-        int dx = this.x - x;
-        int dy = this.y - y;
-        double distance = Math.sqrt(dx*dx + dy*dy);
+    public int getRadius() {
+        return radius;
+    }
 
-        if (distance < this.objRadius + radius) {
-            // Collision detected, change speed here
-            return true;
-        }
-        return false;
+    public void setRadius(int radius) {
+        this.radius = radius;
     }
 
     public void boundVertically() {

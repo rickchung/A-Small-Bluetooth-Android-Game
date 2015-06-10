@@ -95,6 +95,18 @@ public class PikachuVolleyball extends AndroidGame implements HandlerMessageCall
         return devices;
     }
 
+    public ArrayList<BluetoothDevice> getKnownDevices() {
+        btModule.btGetKnownDevices();
+        ArrayList<BluetoothDevice> devices = new ArrayList<BluetoothDevice>();
+        int size = btDevicesListAdapter.getCount();
+
+        for (int i = 0; i < size; i++) {
+            BluetoothDevice btd = (BluetoothDevice) btDevicesListAdapter.getItem(i);
+            devices.add(btd);
+        }
+        return devices;
+    }
+
     /**
      * Check if this device is the host of Bluetooth connection
      * @return
