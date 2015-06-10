@@ -60,6 +60,10 @@ public class Volleyball {
         speedX = -speedX;
     }
 
+    public void setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
 
     /*========== Getters And Setters ==========*/
     public int getX() {
