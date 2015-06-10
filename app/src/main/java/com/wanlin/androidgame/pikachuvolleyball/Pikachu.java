@@ -34,9 +34,11 @@ public class Pikachu {
     private float screenDensityRatioX;
     private float screenDensityRatioY;
 
-    private int selfBound;
-    private int middleBound;
+    public int selfBound;
+    public int middleBound;
 
+    public boolean movingLeftLock = false;
+    public boolean movingRightLock = false;
 
     Pikachu (int x, int y, Point sizePoint, int selfBound, int middleBlound) {
         centerX = x;
@@ -52,8 +54,7 @@ public class Pikachu {
         // Moves Character or Scrolls Background accordingly.
 
         if (isMovingRight() || isMovingLeft()) {
-            // move right
-            centerX += speedX;
+            centerX += speedX; // move horizontally
         }
 
         if (jumped) {
@@ -61,6 +62,7 @@ public class Pikachu {
             centerY += speedY;
             speedY += 4;
         }
+
         if (centerY >= jumpStartY) {
             jumped = false;
             speedY = 0;
@@ -155,6 +157,8 @@ public class Pikachu {
             jumpStartY = centerY;
         }
     }
+
+    public void setCenterX(int x) { centerX = x; }
 
     public void handleAction(final int action) {
         switch (action) {

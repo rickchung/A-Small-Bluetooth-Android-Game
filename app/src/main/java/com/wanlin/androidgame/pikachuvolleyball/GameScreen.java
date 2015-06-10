@@ -3,6 +3,7 @@ package com.wanlin.androidgame.pikachuvolleyball;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.util.Log;
 
 import com.kilobolt.framework.Game;
 import com.kilobolt.framework.Graphics;
@@ -105,8 +106,10 @@ public class GameScreen extends Screen {
             // I'm at the right
             // Set boundaries
             ENEMY_BOUNDARY = 0;
-            ME_BOUNDARY = screenWidth;
+            ME_BOUNDARY = screenWidth - characterA.getWidth();
             MIDDLE_BOUNDARY = screenWidth / 2;
+
+            Log.e(LOG_TAG, "screen width: " + screenWidth);
 
             me = new Pikachu(
                     screenWidth / 2 + 400,
@@ -142,8 +145,11 @@ public class GameScreen extends Screen {
             for (Image i : enemyJumpFrames) {
                 enemyJumpAnim.addFrame(i, ANI_RATE);
             }
-        } else {
+        }
+        else {
             // I'm at the left
+
+            Log.e(LOG_TAG, "screen width: " + screenWidth);
 
             // Set bound
             ME_BOUNDARY = 0;
@@ -230,13 +236,13 @@ public class GameScreen extends Screen {
     private void updateRunning(List<Input.TouchEvent> touchEvents, float deltaTime) {
         boolean triggerJump = false;
         int len = touchEvents.size();
-        if (isMoving && Math.abs(me.getCenterX() - ME_BOUNDARY) > MIDDLE_BOUNDARY) {
-            isMoving = false;
-            me.handleAction(STOP_LEFT);
-            bluetoothModule.sendMessage(String.valueOf(STOP_LEFT));
-            me.handleAction(STOP_RIGHT);
-            bluetoothModule.sendMessage(String.valueOf(STOP_RIGHT));
-        }
+//        if (isMoving && Math.abs(me.getCenterX() - ME_BOUNDARY) > MIDDLE_BOUNDARY) {
+//            isMoving = false;
+//            me.handleAction(STOP_LEFT);
+//            bluetoothModule.sendMessage(String.valueOf(STOP_LEFT));
+//            me.handleAction(STOP_RIGHT);
+//            bluetoothModule.sendMessage(String.valueOf(STOP_RIGHT));
+//        }
 
         for (int i = 0; i < len; i++) {
             Input.TouchEvent event = touchEvents.get(i);
@@ -326,9 +332,28 @@ public class GameScreen extends Screen {
 
         animate();
 
+        // I'm right
+        if (me.selfBound > me.middleBound) {
+            if (me.getCenterX() > me.selfBound) {
+                me.setCenterX(me.selfBound);
+            }
+            else if (me.getCenterX() < me.middleBound) {
+                me.setCenterX(me.middleBound);
+            }
+        }
+        // I'm left
+        else{
+            if (me.getCenterX() < me.selfBound) {
+                me.setCenterX(me.selfBound);
+            }
+            else if (me.getCenterX() > me.middleBound) {
+                me.setCenterX(me.middleBound);
+            }
+        }
+
         // Send me position
         bluetoothModule.sendMessage(String.valueOf(String.format("%d %d %s",
-                        (int) (me.getCenterX() * screenWidthConvRatio),
+                        (int)(me.getCenterX() * screenWidthConvRatio),
                         me.getCenterY(),
                         String.valueOf(triggerJump))
         ));
@@ -484,6 +509,7 @@ public class GameScreen extends Screen {
     }
 
     public void setOtherScreenSize(int width, int height) {
+        Log.e(LOG_TAG, "other screen width: " + width);
         otherScreenWidth = width;
         otherScreenHeight = height;
         screenWidthConvRatio = otherScreenWidth / screenWidth;
