@@ -67,11 +67,12 @@ public class MainMenuScreen extends Screen {
                 }
 
                 else if (bluetoothMsg == "FIND DEVICES") {
-                    for (int j = 0; j < ((PikachuVolleyball) game).getFoundDevices().size(); j++) {
+                    ArrayList<BluetoothDevice> btdList = ((PikachuVolleyball) game).getFoundDevices();
+                    for (int j = 0; j < btdList.size(); j++) {
                         if (inBounds(event, (screenSizePoint.x - Assets.startButton.getWidth()) / 2,
                                 j*Assets.startButton.getHeight(),
                                 Assets.startButton.getWidth(), Assets.startButton.getHeight())) {
-                            BluetoothDevice btDevice = ((PikachuVolleyball) game).getFoundDevices().get(j);
+                            BluetoothDevice btDevice = btdList.get(j);
                             Log.e(LOG_TAG, "touch on: " + btDevice.getName() + " " + btDevice.getAddress());
 
                             // Connect to the remote device
@@ -81,8 +82,7 @@ public class MainMenuScreen extends Screen {
                 }
 
                 else if (bluetoothMsg == "GET KNOWN DEVICES") {
-                    ArrayList<BluetoothDevice> btdList = new ArrayList<BluetoothDevice>();
-
+                    ArrayList<BluetoothDevice> btdList = ((PikachuVolleyball) game).getKnownDevices();
                     for (int j = 0; j < btdList.size(); j++) {
                         if (inBounds(event, (screenSizePoint.x - Assets.startButton.getWidth()) / 2,
                                 j*Assets.startButton.getHeight(),
@@ -112,12 +112,7 @@ public class MainMenuScreen extends Screen {
                 // FIND KNOWN DEVICES
                 if (inBounds(event, 0, 200 + Assets.showKnownDevicesBt.getHeight(),
                         Assets.showKnownDevicesBt.getWidth(), Assets.showKnownDevicesBt.getHeight())) {
-                    Graphics g = game.getGraphics();
-                    ArrayList<BluetoothDevice> btdList = ((PikachuVolleyball) game).getKnownDevices();
-                    for (int j = 0; j < btdList.size(); j++) {
-                        BluetoothDevice btDevice = (BluetoothDevice) btdList.get(j);
-                        g.drawString(btDevice.getName() + " " + btDevice.getAddress(), screenSizePoint.x / 2, (textSize + 30) * (i + 1), paint);
-                    }
+                    bluetoothMsg = "GET KNOWN DEVICES";
                 }
             }
         }
@@ -159,6 +154,14 @@ public class MainMenuScreen extends Screen {
         // draw bluetooth devices string
         else if (bluetoothMsg == "FIND DEVICES") {
             ArrayList<BluetoothDevice> btdList = ((PikachuVolleyball) game).getFoundDevices();
+            for (int i = 0; i < btdList.size(); i++) {
+                BluetoothDevice btDevice = btdList.get(i);
+                g.drawString(btDevice.getName() + " " + btDevice.getAddress(), screenSizePoint.x / 2, (textSize + 30) * (i + 1), paint);
+            }
+        }
+
+        else if (bluetoothMsg == "GET KNOWN DEVICES") {
+            ArrayList<BluetoothDevice> btdList = ((PikachuVolleyball) game).getKnownDevices();
             for (int i = 0; i < btdList.size(); i++) {
                 BluetoothDevice btDevice = btdList.get(i);
                 g.drawString(btDevice.getName() + " " + btDevice.getAddress(), screenSizePoint.x / 2, (textSize + 30) * (i + 1), paint);

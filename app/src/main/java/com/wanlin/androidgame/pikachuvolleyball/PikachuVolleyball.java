@@ -125,7 +125,7 @@ public class PikachuVolleyball extends AndroidGame implements HandlerMessageCall
         switch (msg.what) {
             case BluetoothModule.SERVERSOCK_THREAD_WHAT:
                 strMsg = msg.getData().getString(BluetoothModule.SERVERSOCK_MSG_KEY);
-                Log.d(LOG_TAG, "Got message: " + strMsg);
+                // Log.d(LOG_TAG, "Got message: " + strMsg);
                 if (strMsg == BluetoothModule.RESUlT_CONN_OK) {
                     if (getCurScreenType() == TYPE_SCREEN_MENU) {
                         isHost = true;
@@ -135,7 +135,7 @@ public class PikachuVolleyball extends AndroidGame implements HandlerMessageCall
                 break;
             case BluetoothModule.CLIENTSOCK_THREAD_WHAT:
                 strMsg = msg.getData().getString(BluetoothModule.CLIENTSOCK_MSG_KEY);
-                Log.d(LOG_TAG, "Got message: " + strMsg);
+                // Log.d(LOG_TAG, "Got message: " + strMsg);
                 if (strMsg == BluetoothModule.RESUlT_CONN_OK) {
                     if (getCurScreenType() == TYPE_SCREEN_MENU) {
                         isHost = false;
@@ -145,7 +145,7 @@ public class PikachuVolleyball extends AndroidGame implements HandlerMessageCall
                 break;
             case BluetoothModule.RECEIVER_THREAD_WHAT:
                 strMsg = msg.getData().getString(BluetoothModule.RECEIVER_MSG_KEY);
-                Log.d(LOG_TAG, "Got message: " + strMsg);
+                // Log.d(LOG_TAG, "Got message: " + strMsg);
                 if (getCurScreenType() == TYPE_SCREEN_GAME) {
                     try {
                         int controlCmd = Integer.parseInt(strMsg);
@@ -177,7 +177,7 @@ public class PikachuVolleyball extends AndroidGame implements HandlerMessageCall
                 break;
             case BluetoothModule.SYS_MSG_WHAT:
                 strMsg = msg.getData().getString(BluetoothModule.SYS_MSG_KEY);
-                Log.d(LOG_TAG, "Got message: " + strMsg);
+                // Log.d(LOG_TAG, "Got message: " + strMsg);
                 break;
             default:
                 Log.d(LOG_TAG, "Message error");

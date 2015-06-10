@@ -557,7 +557,7 @@ public class BluetoothModule {
             while (true) {
                 try {
                     numBytes = btIStream.read(buffer);
-                    Log.d(LOG_TAG, "[BtMessageReceiverThread] Read bytes: " + numBytes);
+                    // Log.d(LOG_TAG, "[BtMessageReceiverThread] Read bytes: " + numBytes);
                     // Send the received data to the UI thread
                     String receivedMsg = new String(buffer, 0, numBytes, CHAR_SET);
                     receivedMsg = receivedMsg.trim();
@@ -618,7 +618,7 @@ public class BluetoothModule {
         public void send(String msg) {
             try {
                 byte[] bytes = msg.getBytes(CHAR_SET);
-                Log.d(LOG_TAG, "[BtMessageSender] Trying to write bytes...");
+                // Log.d(LOG_TAG, "[BtMessageSender] Trying to write bytes...");
                 btOStream.write(bytes);
                 btOStream.flush();
             }
