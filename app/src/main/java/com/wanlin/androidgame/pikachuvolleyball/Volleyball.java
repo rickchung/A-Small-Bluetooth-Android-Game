@@ -1,11 +1,13 @@
 package com.wanlin.androidgame.pikachuvolleyball;
 
+import android.util.Log;
+
 /**
  * Created by rickchung on 6/9/15.
  */
 public class Volleyball {
     private static final String LOG_TAG = "Volleyball";
-    private static final double GRAV_ACC = 5;
+    private static final double GRAV_ACC = 2.0;
     private int x;
     private int y;
     private int centerX;
@@ -30,6 +32,8 @@ public class Volleyball {
         // Update the current position
         x += speedX;
         y += speedY;
+        centerX += speedX;
+        centerY += speedY;
         // Update speedY with gravitational acceleration
         speedY += GRAV_ACC;
     }
@@ -38,8 +42,22 @@ public class Volleyball {
         int dx = this.centerX - x;
         int dy = this.centerY - y;
         double distance = Math.sqrt(dx*dx + dy*dy);
+        Log.d(LOG_TAG, String.format("D=%f, r=%d", distance, this.radius));
 
         return ( distance <= this.radius + radius );
+    }
+
+    public void updateSpeed(int x, int y, int speedX, int speedY) {
+        this.speedY = this.speedY * -1 + speedY;
+        this.speedX = this.speedX * -1 + speedX;
+    }
+
+    public void boundVertically() {
+        speedY = -speedY;
+    }
+
+    public void boundHorizontally(){
+        speedX = -speedX;
     }
 
 
@@ -92,25 +110,11 @@ public class Volleyball {
         this.speedY = speedY;
     }
 
-    public void updateSpeed(int x, int y, int speedX, int speedY) {
-        // TODO For test here
-        boundHorizontally();
-        boundVertically();
-    }
-
     public int getRadius() {
         return radius;
     }
 
     public void setRadius(int radius) {
         this.radius = radius;
-    }
-
-    public void boundVertically() {
-        speedY = -speedY;
-    }
-
-    public void boundHorizontally(){
-        speedX = -speedX;
     }
 }
