@@ -50,6 +50,7 @@ public class GameScreen extends Screen {
     public final int STOP_BOTH = 123;
     public final int PAUSE = 10;
     public final int JUMP = 5;
+    public static final String volleyballMsg = "volleyball_msg";
     public static final int YOU_ARE_LOSE = 938495;
     private boolean isMoving = false;
     private boolean isHolding = false;
@@ -99,7 +100,8 @@ public class GameScreen extends Screen {
 
         // Init test volleyball
         volleyball = new Volleyball(0, 0);
-        volleyball.setRadius(volleyballImg.getWidth()/2);
+        // volleyball.setRadius(volleyballImg.getWidth()/2);
+        volleyball.setRadius(100);
         volleyball.setCenterX(volleyball.getX() + volleyball.getRadius());
         volleyball.setCenterY(volleyball.getY() + volleyball.getRadius());
 
@@ -321,36 +323,36 @@ public class GameScreen extends Screen {
         }
 
         // Volleyball rebounds at boundaries
-        if ((volleyball.getX() - volleyballImg.getWidth()/2) < 0) {
-            // Log.e(LOG_TAG, "bound hotizontally");
-            volleyball.setX(1 + volleyballImg.getWidth() / 2);
-            volleyball.boundHorizontally();
-        }
-        else if ((volleyball.getX() + volleyballImg.getWidth()/2) > screenWidth) {
-            // Log.e(LOG_TAG, "bound vertically");
-            volleyball.setX(screenWidth - volleyballImg.getWidth() / 2 - 1);
-            volleyball.boundHorizontally();
-        }
-        if ((volleyball.getY() + volleyballImg.getHeight()/2) > GROUND_BOUNDARY) {
-            // Log.e(LOG_TAG, "bound vertically");
-            volleyball.setY(GROUND_BOUNDARY - volleyballImg.getHeight() / 2 - 1);
-            volleyball.boundVertically();
-        }
-        else if ((volleyball.getY() - volleyballImg.getHeight()/2) < 0) {
-            // Log.e(LOG_TAG, "bound vertically");
-            volleyball.setY(1 + volleyballImg.getHeight()/2);
-            volleyball.setSpeedY(0);
+        if (((PikachuVolleyball)game).isHost()) {
+            if ((volleyball.getX() - volleyballImg.getWidth() / 2) < 0) {
+                // Log.e(LOG_TAG, "bound hotizontally");
+                volleyball.setX(1 + volleyballImg.getWidth() / 2);
+                volleyball.boundHorizontally();
+            } else if ((volleyball.getX() + volleyballImg.getWidth() / 2) > screenWidth) {
+                // Log.e(LOG_TAG, "bound vertically");
+                volleyball.setX(screenWidth - volleyballImg.getWidth() / 2 - 1);
+                volleyball.boundHorizontally();
+            }
+            if ((volleyball.getY() + volleyballImg.getHeight() / 2) > GROUND_BOUNDARY) {
+                // Log.e(LOG_TAG, "bound vertically");
+                volleyball.setY(GROUND_BOUNDARY - volleyballImg.getHeight() / 2 - 1);
+                volleyball.boundVertically();
+            } else if ((volleyball.getY() - volleyballImg.getHeight() / 2) < 0) {
+                // Log.e(LOG_TAG, "bound vertically");
+                volleyball.setY(1 + volleyballImg.getHeight() / 2);
+                volleyball.setSpeedY(0);
+            }
         }
 
         // Chece if volleyball collides with Pikachu
-        if (volleyball.detectCollision(me.getCenterX(), me.getCenterY(), me.getRadius())) {
-            volleyball.updateSpeed(
-                    me.getCenterX(), me.getCenterY(), volleyballAddSpeed, 0);
-        }
-        if (volleyball.detectCollision(enemy.getCenterX(), enemy.getCenterY(), enemy.getRadius())) {
-            volleyball.updateSpeed(
-                    enemy.getCenterX(), enemy.getCenterY(), -1*volleyballAddSpeed, 0);
-        }
+//        if (volleyball.detectCollision(me.getCenterX(), me.getCenterY(), me.getRadius())) {
+//            volleyball.updateSpeed(
+//                    me.getCenterX(), me.getCenterY(), volleyballAddSpeed, 0);
+//        }
+//        if (volleyball.detectCollision(enemy.getCenterX(), enemy.getCenterY(), enemy.getRadius())) {
+//            volleyball.updateSpeed(
+//                    enemy.getCenterX(), enemy.getCenterY(), -1*volleyballAddSpeed, 0);
+//        }
 
 //        if (volleyball.detectCollision(me.getX(), me.getY(), me.getRadius())) {
 //            //Log.e(LOG_TAG, "Me collision detected");
@@ -398,8 +400,6 @@ public class GameScreen extends Screen {
             currentSpriteB = enemyJumpAnim.getImage();
         else
             currentSpriteB = enemyAnim.getImage();
-        // Volleyball update
-        volleyball.update();
 
         // For animation
         animate();
@@ -408,6 +408,16 @@ public class GameScreen extends Screen {
         bluetoothModule.sendMessage(String.valueOf(
                 String.format("%d %d %s", me.getX(), me.getY(), String.valueOf(triggerJump) )
         ));
+
+        // Send volleyball position
+        if (((PikachuVolleyball)game).isHost()) {
+            // Volleyball update
+            volleyball.update();
+
+            bluetoothModule.sendMessage(String.valueOf(
+                    String.format("%d %d %s", volleyball.getX(), volleyball.getY(), volleyballMsg)
+            ));
+        }
     }
 
     private void updatePaused(List<Input.TouchEvent> touchEvents) {
@@ -482,6 +492,7 @@ public class GameScreen extends Screen {
         g.drawImage(currentSpriteA, me.getX(), me.getY());
         g.drawImage(currentSpriteB, enemy.getX(), enemy.getY());
         g.drawString("Pause", 200, 100, paint);
+        g.drawImage(volleyballImg, volleyball.getX(), volleyball.getY());
     }
 
     private void drawPausedUI() {
@@ -519,7 +530,6 @@ public class GameScreen extends Screen {
         meJumpAnim.update(30);
         enemyAnim.update(10);
         enemyJumpAnim.update(30);
-        g.drawImage(volleyballImg, volleyball.getX(), volleyball.getY());
     }
 
     @Override
@@ -554,6 +564,10 @@ public class GameScreen extends Screen {
 
     public Pikachu getEnemy() {
         return enemy;
+    }
+
+    public Volleyball getVolleyball() {
+        return volleyball;
     }
 
     public void stargGame() {

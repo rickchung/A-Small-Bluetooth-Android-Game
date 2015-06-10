@@ -157,8 +157,7 @@ public class PikachuVolleyball extends AndroidGame implements HandlerMessageCall
                         } else if (controlCmd == GameScreen.START_THAT_FUKING_GAMEEEE) {
                             try {
                                 ((GameScreen) getCurrentScreen()).stargGame();
-                            } catch (ClassCastException e) {
-                            }
+                            } catch (ClassCastException e) {}
                         } else if (controlCmd == GameScreen.YOU_ARE_LOSE) {
                             ((GameScreen) getCurrentScreen()).endGame();
                         } else {
@@ -170,8 +169,15 @@ public class PikachuVolleyball extends AndroidGame implements HandlerMessageCall
                         String[] tmp = strMsg.split(" ");
                         int x = Integer.parseInt(tmp[0]);
                         int y = Integer.parseInt(tmp[1]);
-                        boolean jumped = Boolean.parseBoolean(tmp[2]);
-                        ((GameScreen) getCurrentScreen()).getEnemy().setPosition(x, y, jumped);
+                        String msgType = tmp[2];
+                        if (msgType.equals(GameScreen.volleyballMsg)) {
+                            ((GameScreen) getCurrentScreen())
+                                    .getVolleyball().setPosition(x, y);
+                        }
+                        else {
+                            ((GameScreen) getCurrentScreen())
+                                    .getEnemy().setPosition(x, y, Boolean.valueOf(msgType));
+                        }
                     }
                 }
                 break;
