@@ -54,11 +54,13 @@ public class Pikachu {
         if (isMovingRight() || isMovingLeft()) {
             // move right
             x += speedX;
+            centerX += speedX;
         }
 
         if (jumped) {
             // Updates Y Position
             y += speedY;
+            centerY += speedY;
             speedY += 4;
         }
         if (y >= jumpStartY) {
