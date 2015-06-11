@@ -63,10 +63,12 @@ public class Volleyball {
 
         double costheta =
                 ((-1*ox) * (mx-ox) + 0) / (Math.sqrt((mx-ox)*(mx-ox) + (my-oy)*(my-oy)) * ox);
+        double sintheta = Math.sqrt(1.0 - (costheta*costheta));
+
         speedX = -1 * BOUND_ACC_Y * costheta;
 
         // Update speedY
-        speedY = -1 * BOUND_ACC_Y;
+        speedY = -1 * BOUND_ACC_Y * sintheta;
     }
 
     public void boundVertically() {

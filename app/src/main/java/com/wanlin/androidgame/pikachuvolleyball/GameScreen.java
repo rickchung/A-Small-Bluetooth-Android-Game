@@ -398,8 +398,11 @@ public class GameScreen extends Screen {
         if (volleyball.detectCollision(boundX, boundY, 50)) {
             volleyball.updateSpeed(boundX, boundY);
         }
-        if (volleyball.detectCollision(boundX, boundY+100, 50)) {
-            volleyball.updateSpeed(boundX, boundY+100);
+        if (volleyball.detectCollision(boundX, boundY+50, 50)) {
+            volleyball.updateSpeed(boundX, boundY+50);
+        }
+        if (volleyball.detectCollision(boundX, boundY+150, 50)) {
+            volleyball.updateSpeed(boundX, boundY+150);
         }
 
 
