@@ -178,6 +178,11 @@ public class PikachuVolleyball extends AndroidGame implements HandlerMessageCall
                             ((GameScreen) getCurrentScreen())
                                     .getEnemy().setPosition(x, y, Boolean.valueOf(msgType));
                         }
+                        else if (msgType.equals(GameScreen.SCREEN_SIZE_KEY)) {
+                            ((GameScreen) getCurrentScreen())
+                                    .setOtherScreenSize(x, y);
+                        }
+
                     }
                 }
                 break;

@@ -211,6 +211,39 @@ public class Pikachu {
         this.centerY = this.y + halfheight;
     }
 
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHalfwidth() {
+        return halfwidth;
+    }
+
+    public void setHalfwidth(int halfwidth) {
+        this.halfwidth = halfwidth;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public int getHalfheight() {
+        return halfheight;
+    }
+
+    public void setHalfheight(int halfheight) {
+        this.halfheight = halfheight;
+    }
+
     public void handleAction(final int action) {
         switch (action) {
             case PAUSE:

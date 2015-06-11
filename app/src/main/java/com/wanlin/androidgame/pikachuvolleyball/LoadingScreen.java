@@ -46,6 +46,7 @@ public class LoadingScreen extends Screen {
         Assets.menuBgImage = g.newImage("menuBgImage.jpg", Graphics.ImageFormat.RGB565, screenSizePoint.x, screenSizePoint.y);
         Assets.gameoverImage = g.newImage("gameBgImage1.png", Graphics.ImageFormat.RGB565, screenWidth, screenHeight);
         Assets.loserImage = g.newImage("gameBgImage2.png", Graphics.ImageFormat.RGB565, screenWidth, screenHeight);
+        Assets.stickImage = g.newImage("column.png", Graphics.ImageFormat.RGB565, 50, screenHeight/3);
 
         // set pikachu character image
         Assets.characterA = g.newImage("meImage.png", Graphics.ImageFormat.ARGB4444);

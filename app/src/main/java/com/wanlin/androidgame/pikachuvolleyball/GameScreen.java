@@ -25,8 +25,8 @@ public class GameScreen extends Screen {
     private static final String LOG_TAG = "GameScreen";
 
     GameState state = GameState.Ready;
-    private static Pikachu me, enemy;
-    private static Volleyball volleyball;
+    private Pikachu me, enemy;
+    private Volleyball volleyball;
     private Image characterA, characterB, characterAA, characterBB, characterBM, characterAM,
             volleyballImg, currentSpriteA, currentSpriteB, currentSpriteVolleyball;
     private Image cJumpA, cJumpAM, cJumpAA, cJumpB, cJumpBM, cJumpBB;
@@ -34,6 +34,9 @@ public class GameScreen extends Screen {
     private static int halfScreenwidth;
     private static int screenHeight;
     private static int pauseHeight = 300;
+    private static int otherScreenWidth;
+    private static int otherScreenHeight;
+    private static boolean otherSizeIsSet;
     public static int MIDDLE_BOUNDARY;
     public static int ME_BOUNDARY;
     public static int ENEMY_BOUNDARY;
@@ -45,6 +48,7 @@ public class GameScreen extends Screen {
     public static final int PAUSE_GAME = 0;
     public static final int YOU_GOOD_TO_GO = 312849;
     public static final int START_THAT_FUKING_GAMEEEE = 12345;
+    public static final String SCREEN_SIZE_KEY = "screensizekey";
     public final int MOVE_LEFT = 1;
     public final int MOVE_RIGHT = 2;
     public final int STOP_LEFT = 3;
@@ -116,7 +120,7 @@ public class GameScreen extends Screen {
             // Set boundaries
             ENEMY_BOUNDARY = 0;
             ME_BOUNDARY = screenWidth;
-            MIDDLE_BOUNDARY = screenWidth / 2;
+            // MIDDLE_BOUNDARY = screenWidth / 2;
 
             me = new Pikachu(
                     screenWidth / 2 + 400,
@@ -160,7 +164,7 @@ public class GameScreen extends Screen {
             // Set bound
             ME_BOUNDARY = 0;
             ENEMY_BOUNDARY = screenWidth;
-            MIDDLE_BOUNDARY = screenWidth / 2 - (characterA.getWidth());
+            // MIDDLE_BOUNDARY = screenWidth / 2 - (characterA.getWidth());
 
             me = new Pikachu(
                     screenWidth / 2 - 400 - characterB.getWidth(),
@@ -238,6 +242,11 @@ public class GameScreen extends Screen {
     }
 
     private void updateReady(List<Input.TouchEvent> touchEvents) {
+        if (!otherSizeIsSet) {
+            bluetoothModule.sendMessage(String.format("%d %d %s",
+                    screenWidth, screenHeight, SCREEN_SIZE_KEY));
+            otherSizeIsSet = true;
+        }
         if (touchEvents.size() > 0) {
             stargGame();
             bluetoothModule.sendMessage(String.valueOf(START_THAT_FUKING_GAMEEEE));
@@ -247,12 +256,25 @@ public class GameScreen extends Screen {
     private void updateRunning(List<Input.TouchEvent> touchEvents, float deltaTime) {
         boolean triggerJump = false;
         int len = touchEvents.size();
-        if (isMoving && Math.abs(me.getX() - ME_BOUNDARY) > MIDDLE_BOUNDARY) {
-            isMoving = false;
-            me.handleAction(STOP_LEFT);
-            bluetoothModule.sendMessage(String.valueOf(STOP_LEFT));
-            me.handleAction(STOP_RIGHT);
-            bluetoothModule.sendMessage(String.valueOf(STOP_RIGHT));
+        if (isMoving) {
+            if (((PikachuVolleyball)game).isHost()) {
+                if (me.getX() < MIDDLE_BOUNDARY + Assets.stickImage.getWidth()) {
+                    isMoving = false;
+                    me.handleAction(STOP_LEFT);
+                    bluetoothModule.sendMessage(String.valueOf(STOP_LEFT));
+                    me.handleAction(STOP_RIGHT);
+                    bluetoothModule.sendMessage(String.valueOf(STOP_RIGHT));
+                }
+            }
+            else {
+                if (me.getX() + me.getWidth() > MIDDLE_BOUNDARY) {
+                    isMoving = false;
+                    me.handleAction(STOP_LEFT);
+                    bluetoothModule.sendMessage(String.valueOf(STOP_LEFT));
+                    me.handleAction(STOP_RIGHT);
+                    bluetoothModule.sendMessage(String.valueOf(STOP_RIGHT));
+                }
+            }
         }
 
         /*
@@ -268,10 +290,11 @@ public class GameScreen extends Screen {
                 // Pause
                 if (inBounds(event, 0, 0, 400, 200)) {
                     // Check volleyball positin
-                    Log.e(LOG_TAG, String.format(
-                            "VB: centerX=%d, centerY=%d",
-                            volleyball.getCenterX(), volleyball.getCenterY()
-                    ));
+//                    Log.e(LOG_TAG, String.format(
+//                            "VB: centerX=%d, centerY=%d",
+//                            volleyball.getCenterX(), volleyball.getCenterY()
+//                    ));
+                    Log.e(LOG_TAG, String.format("Middle boundary=%d", MIDDLE_BOUNDARY));
                     if (isMoving) {
                         isMoving = false;
                         me.handleAction(STOP_LEFT);
@@ -463,6 +486,13 @@ public class GameScreen extends Screen {
 
         // First draw the game elements.
         g.drawImage(Assets.gameBgImage, 0, 0);
+        g.drawImage(Assets.stickImage, MIDDLE_BOUNDARY, GROUND_BOUNDARY - Assets.stickImage.getHeight());
+//        if (((PikachuVolleyball)game).isHost()) {
+//            g.drawImage(Assets.stickImage, MIDDLE_BOUNDARY, GROUND_BOUNDARY - Assets.stickImage.getHeight());
+//        }
+//        else {
+//            g.drawImage(Assets.stickImage, MIDDLE_BOUNDARY + characterA.getWidth(), GROUND_BOUNDARY - Assets.stickImage.getHeight());
+//        }
         g.drawImage(currentSpriteA, me.getX(), me.getY());
         g.drawImage(currentSpriteB, enemy.getX(), enemy.getY());
         g.drawImage(volleyballImg, volleyball.getX(), volleyball.getY());
@@ -621,5 +651,19 @@ public class GameScreen extends Screen {
 
     public void endGame() {
         state = GameState.GameOver;
+    }
+
+    public void setOtherScreenSize(int width, int height) {
+        Log.e(LOG_TAG, "other screen width: " + width);
+        Log.e(LOG_TAG, "my screen width: " + screenWidth);
+        otherScreenWidth = width;
+        otherScreenHeight = height;
+        if (screenWidth > otherScreenWidth) {
+            MIDDLE_BOUNDARY = otherScreenWidth / 2;
+        }
+        else {
+            MIDDLE_BOUNDARY = screenWidth / 2;
+        }
+        Log.e(LOG_TAG, "MIDDLE_BOUNDARY = " + MIDDLE_BOUNDARY);
     }
 }
