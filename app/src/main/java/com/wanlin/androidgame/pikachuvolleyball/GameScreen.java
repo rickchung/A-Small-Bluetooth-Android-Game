@@ -333,9 +333,9 @@ public class GameScreen extends Screen {
             }
             // If ball hits the ground
             if ((volleyball.getY() + volleyballImg.getHeight() / 2) > GROUND_BOUNDARY) {
-                volleyball.setY(GROUND_BOUNDARY - volleyballImg.getHeight() / 2 - 1);
+                volleyball.setY(GROUND_BOUNDARY - volleyballImg.getHeight() / 2 - 10);
                 volleyball.boundVertically();
-                if (volleyball.getX() == MIDDLE_BOUNDARY) {
+                if (volleyball.getX() > MIDDLE_BOUNDARY) {
                     myscore += 1;
                 }
                 else {
@@ -350,7 +350,8 @@ public class GameScreen extends Screen {
         else {
             // If ball hits the ground
             if ((volleyball.getY() + volleyballImg.getHeight() / 2) > GROUND_BOUNDARY) {
-                if (volleyball.getX() == MIDDLE_BOUNDARY) {
+                volleyball.setY(GROUND_BOUNDARY - volleyballImg.getHeight() / 2 - 10);
+                if (volleyball.getX() > MIDDLE_BOUNDARY) {
                     enemyscore += 1;
                 }
                 else {
@@ -392,6 +393,7 @@ public class GameScreen extends Screen {
         else {
             if (musicIsPlaying) {
                 musicIsPlaying = false;
+                Assets.shortKimisa.stop();
                 Assets.shortKimisa.dispose();
             }
         }
@@ -588,10 +590,12 @@ public class GameScreen extends Screen {
     public void backButton() {
         if (state == GameState.GameOver) {
             try {
+                Assets.playingBgm.stop();
                 Assets.playingBgm.dispose();
             }
             catch (Exception e) {}
             try {
+                Assets.shortKimisa.stop();
                 Assets.shortKimisa.dispose();
             }
             catch (Exception e) {}
@@ -615,5 +619,7 @@ public class GameScreen extends Screen {
         state = GameState.Running;
     }
 
-    public void endGame() { state = GameState.GameOver; }
+    public void endGame() {
+        state = GameState.GameOver;
+    }
 }
