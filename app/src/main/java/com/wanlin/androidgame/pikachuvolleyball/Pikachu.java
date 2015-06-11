@@ -10,14 +10,15 @@ public class Pikachu {
     float JUMP_SPEED = -40.0f;
     float MOVE_SPEED = 12.0f;
 
-    private final int PAUSE = 0;
-    private final int MOVE_LEFT = 1;
-    private final int MOVE_RIGHT = 2;
     public final int STOP_LEFT = 3;
     public final int STOP_RIGHT = 4;
     public static final int STOP_BOTH = 123;
-    private final int JUMP = 5;
-    private final float NUM_MOVING_SLOTS = 900.0f;
+    private static final int PAUSE = 0;
+    private static final int MOVE_LEFT = 1;
+    private static final int MOVE_RIGHT = 2;
+
+    private static final int JUMP = 5;
+    private static final float NUM_MOVING_SLOTS = 900.0f;
     private boolean ducked = false;
     private boolean jumped = false;
     private boolean movingLeft = false;

@@ -255,6 +255,9 @@ public class GameScreen extends Screen {
             bluetoothModule.sendMessage(String.valueOf(STOP_RIGHT));
         }
 
+        /*
+            Handle all touch events here
+         */
         for (int i = 0; i < len; i++) {
             Input.TouchEvent event = touchEvents.get(i);
 
@@ -315,6 +318,9 @@ public class GameScreen extends Screen {
             }
         }
 
+        /*
+            Volleyball rebound events
+         */
         // Volleyball rebounds at boundaries
         if (((PikachuVolleyball)game).isHost()) {
             if ((volleyball.getX() - volleyballImg.getWidth() / 2) < 0) {
@@ -329,7 +335,7 @@ public class GameScreen extends Screen {
             if ((volleyball.getY() + volleyballImg.getHeight() / 2) > GROUND_BOUNDARY) {
                 volleyball.setY(GROUND_BOUNDARY - volleyballImg.getHeight() / 2 - 1);
                 volleyball.boundVertically();
-                if (volleyball.getX() > MIDDLE_BOUNDARY) {
+                if (volleyball.getX() == MIDDLE_BOUNDARY) {
                     myscore += 1;
                 }
                 else {
@@ -344,7 +350,7 @@ public class GameScreen extends Screen {
         else {
             // If ball hits the ground
             if ((volleyball.getY() + volleyballImg.getHeight() / 2) > GROUND_BOUNDARY) {
-                if (volleyball.getX() > MIDDLE_BOUNDARY) {
+                if (volleyball.getX() == MIDDLE_BOUNDARY) {
                     enemyscore += 1;
                 }
                 else {
@@ -353,7 +359,9 @@ public class GameScreen extends Screen {
             }
         }
 
-        // Check if volleyball collides with Pikachu
+        /*
+            Check if volleyball collides with Pikachu
+         */
         if (volleyball.detectCollision(me.getCenterX(), me.getCenterY(), me.getRadius())) {
             volleyball.updateSpeed(me.getCenterX(), me.getCenterY());
         }
@@ -361,12 +369,16 @@ public class GameScreen extends Screen {
             volleyball.updateSpeed(enemy.getCenterX(), enemy.getCenterY());
         }
 
-        // check score
+        /*
+            Check score
+         */
         if (score == targetScore) {
-            state = GameState.GameOver;
+            endGame();
         }
 
-        // MUSIC!
+        /*
+            Bonus music
+         */
         if (Math.abs(me.getX()-enemy.getX()) < 280) {
             if (!musicIsPlaying) {
                 musicIsPlaying = true;
@@ -384,6 +396,9 @@ public class GameScreen extends Screen {
             }
         }
 
+        /*
+            Update events here
+         */
         // Me update
         me.update();
         if (me.isJumped())
@@ -398,9 +413,15 @@ public class GameScreen extends Screen {
         else
             currentSpriteB = enemyAnim.getImage();
 
+        /*
+            Animation
+         */
         // For animation
         animate();
 
+        /*
+            Bluetooth synchronization
+         */
         // Send me position
         bluetoothModule.sendMessage(String.valueOf(
                 String.format("%d %d %s", me.getX(), me.getY(), String.valueOf(triggerJump) )
