@@ -7,9 +7,11 @@ public class Volleyball {
     private static final String LOG_TAG = "Volleyball";
     private static final double GRAV_ACC = 3.0;
     private static final double BOUND_ACC = 60.0;
+    private static final double REBOUND_ACC = 30.0;
+    private static final double REBOUND_ACC_Y = 60.0;
     private static final double START_SPEED = 5.0;
-    private static final double BOUND_ACC_Y = 65.0;
-    private static final double BOUND_ACC_ATTACK = 130.0;
+    private static final double BOUND_ACC_ATTACK_X = 120.0;
+    private static final double BOUND_ACC_ATTACK_Y = 100.0;
     private int x;
     private int y;
     private int centerX;
@@ -21,6 +23,7 @@ public class Volleyball {
     private int radius;
     private double speedX;
     private double speedY;
+    private boolean isAttacked;
 
     Volleyball(int x, int y, int width, int height) {
         this.x = x;
@@ -34,6 +37,7 @@ public class Volleyball {
         this.speedX = START_SPEED;
         this.speedY = START_SPEED;
         this.radius = halfWidth;
+        this.isAttacked = false;
     }
 
     /**
@@ -66,10 +70,25 @@ public class Volleyball {
                 ((-1*ox) * (mx-ox) + 0) / (Math.sqrt((mx-ox)*(mx-ox) + (my-oy)*(my-oy)) * ox);
         double sintheta = Math.sqrt(1.0 - (costheta*costheta));
 
-        speedX = -1 * BOUND_ACC_Y * costheta;
+        speedX = -1 * BOUND_ACC * costheta;
 
         // Update speedY
-        speedY = -1 * BOUND_ACC_Y * sintheta;
+        speedY = -1 * BOUND_ACC * sintheta;
+    }
+
+    public void updateSpeed(int ox, int oy, double rate) {
+        // Update speedX
+        int mx = this.centerX;
+        int my = this.centerY;
+
+        double costheta =
+                ((-1*ox) * (mx-ox) + 0) / (Math.sqrt((mx-ox)*(mx-ox) + (my-oy)*(my-oy)) * ox);
+        double sintheta = Math.sqrt(1.0 - (costheta*costheta));
+
+        speedX = -1 * BOUND_ACC * rate * costheta;
+
+        // Update speedY
+        speedY = -1 * BOUND_ACC * rate * sintheta;
     }
 
     public void updateSpeed(int ox, int oy, boolean isAttacking) {
@@ -83,23 +102,23 @@ public class Volleyball {
 
 
         if (isAttacking) {
-            speedX = -1 * BOUND_ACC_ATTACK * costheta;
+            speedX = -1 * BOUND_ACC_ATTACK_X * costheta;
             // Update speedY
-            speedY = -1 * BOUND_ACC_ATTACK * sintheta;
+            speedY = -1 * BOUND_ACC_ATTACK_Y * sintheta;
         }
         else {
-            speedX = -1 * BOUND_ACC_Y * costheta;
+            speedX = -1 * BOUND_ACC * costheta;
             // Update speedY
-            speedY = -1 * BOUND_ACC_Y * sintheta;
+            speedY = -1 * BOUND_ACC * sintheta;
         }
     }
 
     public void boundVertically() {
-        speedY = speedY > 0 ? -1 * BOUND_ACC : BOUND_ACC;
+        speedY = speedY > 0 ? -1 * REBOUND_ACC_Y : REBOUND_ACC_Y;
     }
 
     public void boundHorizontally(){
-        speedX = speedX > 0 ? -1 * BOUND_ACC : BOUND_ACC;
+        speedX = speedX > 0 ? -1 * REBOUND_ACC : REBOUND_ACC;
     }
 
     public void setPosition(int x, int y) {
@@ -197,5 +216,13 @@ public class Volleyball {
 
     public void setHalfHeight(int halfHeight) {
         this.halfHeight = halfHeight;
+    }
+
+    public boolean isAttacked() {
+        return isAttacked;
+    }
+
+    public void setIsAttacked(boolean isAttacked) {
+        this.isAttacked = isAttacked;
     }
 }

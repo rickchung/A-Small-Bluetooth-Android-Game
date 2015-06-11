@@ -94,6 +94,9 @@ public class GameScreen extends Screen {
         // Init some variables
         isAttacking = false;
         attackDuration = 0;
+        Assets.shortKimisa = game.getAudio().createMusic("short_kimisa.mp3");
+        Assets.playingBgm = game.getAudio().createMusic("gameBGM.mp3");
+        Assets.playingBgm.setLooping(true);
 
         // Set screen size
         Point screenSizePoint = ((PikachuVolleyball) game).getSizePoint();
@@ -125,11 +128,11 @@ public class GameScreen extends Screen {
         volleyballImg = Assets.volleyballImage;
 
         // Init score
-        targetScore = 15;
+        targetScore = 10;
         myscore = enemyscore = 0;
 
         // Init test volleyball
-        volleyball = new Volleyball(0, 0, volleyballImg.getWidth(), volleyballImg.getHeight());
+        volleyball = new Volleyball(10, 10, volleyballImg.getWidth(), volleyballImg.getHeight());
 
         if (((PikachuVolleyball) game).isHost()) {
             // I'm at the right
@@ -304,7 +307,6 @@ public class GameScreen extends Screen {
             if (attackDuration >= ATTACK_DURATION_BOUND) {
                 isAttacking = false;
                 attackDuration = 0;
-
             }
         }
 
@@ -372,6 +374,7 @@ public class GameScreen extends Screen {
                 if (me.isJumped() && inBounds(event, screenWidth-400, 0, 800, pauseHeight)) {
                     Log.e(LOG_TAG, "ATTACK!!!!");
                     isAttacking = true;
+                    volleyball.setIsAttacked(true);
                 }
 
                 // For jump
@@ -406,28 +409,49 @@ public class GameScreen extends Screen {
         if (((PikachuVolleyball)game).isHost()) {
             if ((volleyball.getX() - volleyballImg.getWidth() / 2) < 0) {
                 volleyball.setX(1 + volleyballImg.getWidth() / 2);
-                volleyball.boundHorizontally();
+                if (volleyball.isAttacked()) {
+                    volleyball.setSpeedX( -1 * volleyball.getSpeedX() );
+                }
+                else {
+                    volleyball.boundHorizontally();
+                }
             }
             else if ((volleyball.getX() + volleyballImg.getWidth() / 2) > screenWidth) {
                 volleyball.setX(screenWidth - volleyballImg.getWidth() / 2 - 1);
-                volleyball.boundHorizontally();
+
+                if (volleyball.isAttacked()) {
+                    volleyball.setSpeedX( -1 * volleyball.getSpeedX() );
+                }
+                else {
+                    volleyball.boundHorizontally();
+                }
             }
             // If ball hits the ground
             if ((volleyball.getY() + volleyballImg.getHeight() / 2) > GROUND_BOUNDARY) {
                 volleyball.setY(GROUND_BOUNDARY - volleyballImg.getHeight() / 2 - 10);
                 volleyball.boundVertically();
+                volleyball.setIsAttacked(false);
+
+                // Score statistic
                 if (volleyball.getX() > MIDDLE_BOUNDARY) {
-                    myscore += 1;
+                    enemyscore += 1;
                 }
                 else {
-                    enemyscore += 1;
+                    myscore += 1;
                 }
                 // Send scores to the other
                 bluetoothModule.sendMessage(String.format("%d %d %s", myscore, enemyscore, SCORE_SYNC));
             }
+            // If the ball hits the celling
             else if ((volleyball.getY() - volleyballImg.getHeight() / 2) < 0) {
                 volleyball.setY(1 + volleyballImg.getHeight() / 2);
-                volleyball.setSpeedY(0);
+
+                if (volleyball.isAttacked()) {
+                    volleyball.setSpeedY( -1 * volleyball.getSpeedY() );
+                }
+                else {
+                    volleyball.setSpeedY(0);
+                }
             }
         }
 
@@ -447,43 +471,47 @@ public class GameScreen extends Screen {
                 volleyball.updateSpeed(enemy.getCenterX(), enemy.getCenterY());
         }
         if (volleyball.detectCollision(boundX, boundY, 50)) {
-            volleyball.updateSpeed(boundX, boundY);
+            volleyball.updateSpeed(boundX, boundY, 0.8);
         }
         if (volleyball.detectCollision(boundX, boundY+50, 50)) {
-            volleyball.updateSpeed(boundX, boundY+50);
+            volleyball.updateSpeed(boundX, boundY+50, 0.8);
         }
         if (volleyball.detectCollision(boundX, boundY+150, 50)) {
-            volleyball.updateSpeed(boundX, boundY+150);
+            volleyball.updateSpeed(boundX, boundY+150, 0.8);
         }
 
 
         /*
             Check score
          */
-//        if (score == targetScore) {
-//            endGame();
-//        }
+        if (myscore == targetScore) {
+            bluetoothModule.sendMessage(String.valueOf(YOU_ARE_LOSE));
+            isWin = true;
+            endGame();
+        }
 
         /*
             Bonus music
          */
-        if (Math.abs(me.getX()-enemy.getX()) < 280) {
-            if (!musicIsPlaying) {
-                musicIsPlaying = true;
-                Assets.shortKimisa = game.getAudio().createMusic("short_kimisa.mp3");
-                Assets.shortKimisa.play();
-                bluetoothModule.sendMessage(String.valueOf(YOU_ARE_LOSE));
-                isWin = true;
-                endGame();
-            }
+        if (Math.abs(me.getX()-enemy.getX()) < me.getWidth()) {
+            bluetoothModule.sendMessage(String.valueOf(YOU_ARE_LOSE));
+            isWin = true;
+            endGame();
+//            if (!musicIsPlaying) {
+//                musicIsPlaying = true;
+//                Assets.shortKimisa.play();
+//                bluetoothModule.sendMessage(String.valueOf(YOU_ARE_LOSE));
+//                isWin = true;
+//                endGame();
+//            }
         }
-        else {
-            if (musicIsPlaying) {
-                musicIsPlaying = false;
-                Assets.shortKimisa.stop();
-                Assets.shortKimisa.dispose();
-            }
-        }
+//        else {
+//            if (musicIsPlaying) {
+//                musicIsPlaying = false;
+//                Assets.shortKimisa.stop();
+//                Assets.shortKimisa.dispose();
+//            }
+//        }
 
         /*
             Update events here
@@ -604,10 +632,10 @@ public class GameScreen extends Screen {
         g.drawString("Pause", 200, 100, paint);
         g.drawImage(volleyballImg, volleyball.getX(), volleyball.getY());
         if (((PikachuVolleyball)game).isHost())
-            g.drawString(String.format("%d | %d", myscore, enemyscore),
+            g.drawString(String.format("%d | %d", enemyscore, myscore),
                     halfScreenwidth, 100, paint);
         else {
-            g.drawString(String.format("%d | %d", enemyscore, myscore),
+            g.drawString(String.format("%d | %d", myscore, enemyscore),
                     halfScreenwidth, 100, paint);
         }
     }
@@ -681,17 +709,14 @@ public class GameScreen extends Screen {
     @Override
     public void backButton() {
         if (state == GameState.GameOver) {
-            try {
-                Assets.playingBgm.stop();
-                Assets.playingBgm.dispose();
-            }
-            catch (Exception e) {}
-            try {
-                Assets.shortKimisa.stop();
-                Assets.shortKimisa.dispose();
-            }
-            catch (Exception e) {}
-
+//            try {
+//                Assets.playingBgm.dispose();
+//            }
+//            catch (Exception e) {}
+//            try {
+//                Assets.shortKimisa.dispose();
+//            }
+//            catch (Exception e) {}
             game.setScreen(new GameScreen(game));
         }
     }
@@ -705,13 +730,16 @@ public class GameScreen extends Screen {
     }
 
     public void stargGame() {
-        Assets.playingBgm = game.getAudio().createMusic("gameBGM.mp3");
-        Assets.playingBgm.setLooping(true);
+        Assets.shortKimisa.pause();
+        Assets.playingBgm.seekBegin();
         Assets.playingBgm.play();
         state = GameState.Running;
     }
 
     public void endGame() {
+        Assets.playingBgm.pause();
+        Assets.shortKimisa.seekBegin();
+        Assets.shortKimisa.play();
         state = GameState.GameOver;
     }
 
