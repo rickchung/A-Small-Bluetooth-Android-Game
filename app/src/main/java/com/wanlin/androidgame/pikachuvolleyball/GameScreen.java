@@ -40,7 +40,6 @@ public class GameScreen extends Screen {
     public static int GROUND_BOUNDARY;
     private Animation meAnim, meJumpAnim;
     private Animation enemyAnim, enemyJumpAnim;
-    private int score = 0;
 
     public static final int PAUSE_GAME = 0;
     public static final int YOU_GOOD_TO_GO = 312849;
@@ -58,11 +57,10 @@ public class GameScreen extends Screen {
     private boolean isHolding = false;
     private final int ANI_RATE = 150;
     private int touchDownY;
-    private boolean musicIsPlaying = false;
     private BluetoothModule bluetoothModule;
     private boolean isWin = false;
     private Game game;
-    private int targetScore = 15;
+    private int targetScore = 2;
     private int myscore;
     private int enemyscore;
     Paint paint;
@@ -70,6 +68,8 @@ public class GameScreen extends Screen {
 
     private int volleyballAddSpeed;
     private int windAcc = 1;
+
+    private boolean gameStarted = false;
 
 
     public GameScreen(Game game) {
@@ -268,10 +268,6 @@ public class GameScreen extends Screen {
                 // Pause
                 if (inBounds(event, 0, 0, 400, 200)) {
                     // Check volleyball positin
-                    Log.e(LOG_TAG, String.format(
-                            "VB: centerX=%d, centerY=%d",
-                            volleyball.getCenterX(), volleyball.getCenterY()
-                    ));
                     if (isMoving) {
                         isMoving = false;
                         me.handleAction(STOP_LEFT);
@@ -333,9 +329,9 @@ public class GameScreen extends Screen {
             }
             // If ball hits the ground
             if ((volleyball.getY() + volleyballImg.getHeight() / 2) > GROUND_BOUNDARY) {
-                volleyball.setY(GROUND_BOUNDARY - volleyballImg.getHeight() / 2 - 1);
+                volleyball.setY(GROUND_BOUNDARY - volleyballImg.getHeight() / 2 - 10);
                 volleyball.boundVertically();
-                if (volleyball.getX() == MIDDLE_BOUNDARY) {
+                if (volleyball.getX() > MIDDLE_BOUNDARY) {
                     myscore += 1;
                 }
                 else {
@@ -350,7 +346,8 @@ public class GameScreen extends Screen {
         else {
             // If ball hits the ground
             if ((volleyball.getY() + volleyballImg.getHeight() / 2) > GROUND_BOUNDARY) {
-                if (volleyball.getX() == MIDDLE_BOUNDARY) {
+                volleyball.setY(GROUND_BOUNDARY - volleyballImg.getHeight() / 2 - 10);
+                if (volleyball.getX() > MIDDLE_BOUNDARY) {
                     enemyscore += 1;
                 }
                 else {
@@ -372,7 +369,11 @@ public class GameScreen extends Screen {
         /*
             Check score
          */
-        if (score == targetScore) {
+        if (myscore == targetScore) {
+            isWin = true;
+            endGame();
+        }
+        else if (enemyscore == targetScore) {
             endGame();
         }
 
@@ -380,20 +381,8 @@ public class GameScreen extends Screen {
             Bonus music
          */
         if (Math.abs(me.getX()-enemy.getX()) < 280) {
-            if (!musicIsPlaying) {
-                musicIsPlaying = true;
-                Assets.shortKimisa = game.getAudio().createMusic("short_kimisa.mp3");
-                Assets.shortKimisa.play();
-                bluetoothModule.sendMessage(String.valueOf(YOU_ARE_LOSE));
-                isWin = true;
-                endGame();
-            }
-        }
-        else {
-            if (musicIsPlaying) {
-                musicIsPlaying = false;
-                Assets.shortKimisa.dispose();
-            }
+            isWin = true;
+            endGame();
         }
 
         /*
@@ -586,16 +575,12 @@ public class GameScreen extends Screen {
 
     @Override
     public void backButton() {
+        Log.e(LOG_TAG, "Backbtn pressed. state = " + state);
         if (state == GameState.GameOver) {
             try {
-                Assets.playingBgm.dispose();
-            }
-            catch (Exception e) {}
-            try {
+                Assets.shortKimisa.stop();
                 Assets.shortKimisa.dispose();
-            }
-            catch (Exception e) {}
-
+            } catch (Exception e) { }
             game.setScreen(new GameScreen(game));
         }
     }
@@ -609,11 +594,30 @@ public class GameScreen extends Screen {
     }
 
     public void stargGame() {
-        Assets.playingBgm = game.getAudio().createMusic("gameBGM.mp3");
-        Assets.playingBgm.setLooping(true);
-        Assets.playingBgm.play();
-        state = GameState.Running;
+        if (!gameStarted) {
+            gameStarted = true;
+            Assets.playingBgm = game.getAudio().createMusic("gameBGM.mp3");
+            Assets.playingBgm.setLooping(true);
+            Assets.playingBgm.play();
+            state = GameState.Running;
+        }
     }
 
-    public void endGame() { state = GameState.GameOver; }
+    public void endGame() {
+        state = GameState.GameOver;
+
+        try {
+            Assets.playingBgm.stop();
+            Assets.playingBgm.dispose();
+        } catch(Exception e) { }
+//        try {
+//            Assets.shortKimisa = game.getAudio().createMusic("short_kimisa.mp3");
+//            Assets.shortKimisa.play();
+//        } catch(Exception e) { }
+
+        // Tell the other
+        bluetoothModule.sendMessage(String.valueOf(YOU_ARE_LOSE));
+        // reset scores
+        myscore = enemyscore = 0;
+    }
 }

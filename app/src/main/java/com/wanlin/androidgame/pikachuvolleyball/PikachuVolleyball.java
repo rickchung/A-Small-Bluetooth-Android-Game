@@ -152,15 +152,19 @@ public class PikachuVolleyball extends AndroidGame implements HandlerMessageCall
 
                         if (controlCmd == GameScreen.PAUSE_GAME) {
                             getCurrentScreen().pause();
-                        } else if (controlCmd == GameScreen.YOU_GOOD_TO_GO) {
+                        }
+                        else if (controlCmd == GameScreen.YOU_GOOD_TO_GO) {
                             getCurrentScreen().resume();
-                        } else if (controlCmd == GameScreen.START_THAT_FUKING_GAMEEEE) {
+                        }
+                        else if (controlCmd == GameScreen.START_THAT_FUKING_GAMEEEE) {
                             try {
                                 ((GameScreen) getCurrentScreen()).stargGame();
                             } catch (ClassCastException e) {}
-                        } else if (controlCmd == GameScreen.YOU_ARE_LOSE) {
+                        }
+                        else if (controlCmd == GameScreen.YOU_ARE_LOSE) {
                             ((GameScreen) getCurrentScreen()).endGame();
-                        } else {
+                        }
+                        else {
                             ((GameScreen) getCurrentScreen()).getEnemy().handleAction(controlCmd);
                         }
                     }

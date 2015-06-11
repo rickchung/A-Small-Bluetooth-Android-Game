@@ -5,7 +5,7 @@ package com.wanlin.androidgame.pikachuvolleyball;
  */
 public class Volleyball {
     private static final String LOG_TAG = "Volleyball";
-    private static final double GRAV_ACC = 2.0;
+    private static final double GRAV_ACC = 4.0;
     private static final double BOUND_ACC = 20.0;
     private static final double START_SPEED = 5.0;
     private static final double BOUND_ACC_Y = 65.0;
