@@ -7,7 +7,7 @@ import android.graphics.Point;
  */
 public class Pikachu {
     final String LOG_TAG = "Pikachu";
-    float JUMP_SPEED = -40.0f;
+    float JUMP_SPEED = -50.0f;
     float MOVE_SPEED = 12.0f;
 
     public final int STOP_LEFT = 3;
