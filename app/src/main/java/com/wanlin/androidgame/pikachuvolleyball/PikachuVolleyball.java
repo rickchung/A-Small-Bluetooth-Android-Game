@@ -170,13 +170,17 @@ public class PikachuVolleyball extends AndroidGame implements HandlerMessageCall
                         int x = Integer.parseInt(tmp[0]);
                         int y = Integer.parseInt(tmp[1]);
                         String msgType = tmp[2];
-                        if (msgType.equals(GameScreen.volleyballMsg)) {
+                        if (msgType.equals(GameScreen.VOLLEYBALL_MSG)) {
                             ((GameScreen) getCurrentScreen())
                                     .getVolleyball().setPosition(x, y);
                         }
                         else if (msgType.equals("true") || msgType.equals("false")) {
                             ((GameScreen) getCurrentScreen())
                                     .getEnemy().setPosition(x, y, Boolean.valueOf(msgType));
+                        }
+                        else if (msgType.equals(GameScreen.SCORE_SYNC)) {
+                            ((GameScreen) getCurrentScreen())
+                                    .setScores(y, x);
                         }
                         else if (msgType.equals(GameScreen.SCREEN_SIZE_KEY)) {
                             ((GameScreen) getCurrentScreen())

@@ -56,8 +56,9 @@ public class GameScreen extends Screen {
     public final int STOP_BOTH = 123;
     public final int PAUSE = 10;
     public final int JUMP = 5;
-    public static final String volleyballMsg = "volleyball_msg";
+    public static final String VOLLEYBALL_MSG = "volleyball_msg";
     public static final int YOU_ARE_LOSE = 938495;
+    public static final String SCORE_SYNC = "score_sync";
     private boolean isMoving = false;
     private boolean isHolding = false;
     private final int ANI_RATE = 150;
@@ -421,22 +422,12 @@ public class GameScreen extends Screen {
                 else {
                     enemyscore += 1;
                 }
+                // Send scores to the other
+                bluetoothModule.sendMessage(String.format("%d %d %s", myscore, enemyscore, SCORE_SYNC));
             }
             else if ((volleyball.getY() - volleyballImg.getHeight() / 2) < 0) {
                 volleyball.setY(1 + volleyballImg.getHeight() / 2);
                 volleyball.setSpeedY(0);
-            }
-        }
-        else {
-            // If ball hits the ground
-            if ((volleyball.getY() + volleyballImg.getHeight() / 2) > GROUND_BOUNDARY) {
-                volleyball.setY(GROUND_BOUNDARY - volleyballImg.getHeight() / 2 - 10);
-                if (volleyball.getX() > MIDDLE_BOUNDARY) {
-                    enemyscore += 1;
-                }
-                else {
-                    myscore += 1;
-                }
             }
         }
 
@@ -533,7 +524,7 @@ public class GameScreen extends Screen {
             volleyball.update();
 
             bluetoothModule.sendMessage(String.valueOf(
-                    String.format("%d %d %s", volleyball.getX(), volleyball.getY(), volleyballMsg)
+                    String.format("%d %d %s", volleyball.getX(), volleyball.getY(), VOLLEYBALL_MSG)
             ));
         }
     }
@@ -738,5 +729,10 @@ public class GameScreen extends Screen {
         Log.e(LOG_TAG, "MIDDLE_BOUNDARY = " + MIDDLE_BOUNDARY);
         boundX = MIDDLE_BOUNDARY;
         boundY = me.getY()+me.getHeight()-Assets.stickImage.getHeight();
+    }
+
+    public void setScores(int myscore, int enemyscore) {
+        this.myscore = myscore;
+        this.enemyscore = enemyscore;
     }
 }
