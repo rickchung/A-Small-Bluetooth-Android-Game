@@ -75,6 +75,9 @@ public class GameScreen extends Screen {
     private int volleyballAddSpeed;
     private int windAcc = 1;
 
+    private static int boundX;
+    private static int boundY;
+
 
     public GameScreen(Game game) {
         super(game);
@@ -392,6 +395,10 @@ public class GameScreen extends Screen {
         if (volleyball.detectCollision(enemy.getCenterX(), enemy.getCenterY(), enemy.getRadius())) {
             volleyball.updateSpeed(enemy.getCenterX(), enemy.getCenterY());
         }
+        if (volleyball.detectCollision(enemy.getCenterX(), enemy.getCenterY(), enemy.getRadius())) {
+            volleyball.updateSpeed(enemy.getCenterX(), enemy.getCenterY());
+        }
+
 
         /*
             Check score
@@ -486,13 +493,7 @@ public class GameScreen extends Screen {
 
         // First draw the game elements.
         g.drawImage(Assets.gameBgImage, 0, 0);
-        g.drawImage(Assets.stickImage, MIDDLE_BOUNDARY, GROUND_BOUNDARY - Assets.stickImage.getHeight());
-//        if (((PikachuVolleyball)game).isHost()) {
-//            g.drawImage(Assets.stickImage, MIDDLE_BOUNDARY, GROUND_BOUNDARY - Assets.stickImage.getHeight());
-//        }
-//        else {
-//            g.drawImage(Assets.stickImage, MIDDLE_BOUNDARY + characterA.getWidth(), GROUND_BOUNDARY - Assets.stickImage.getHeight());
-//        }
+        g.drawImage(Assets.stickImage, boundX, boundY);
         g.drawImage(currentSpriteA, me.getX(), me.getY());
         g.drawImage(currentSpriteB, enemy.getX(), enemy.getY());
         g.drawImage(volleyballImg, volleyball.getX(), volleyball.getY());
@@ -665,5 +666,7 @@ public class GameScreen extends Screen {
             MIDDLE_BOUNDARY = screenWidth / 2;
         }
         Log.e(LOG_TAG, "MIDDLE_BOUNDARY = " + MIDDLE_BOUNDARY);
+        boundX = MIDDLE_BOUNDARY;
+        boundY = me.getY()+me.getHeight()-Assets.stickImage.getHeight();
     }
 }
