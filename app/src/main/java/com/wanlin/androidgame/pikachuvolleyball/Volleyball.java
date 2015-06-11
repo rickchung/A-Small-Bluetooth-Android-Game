@@ -5,10 +5,11 @@ package com.wanlin.androidgame.pikachuvolleyball;
  */
 public class Volleyball {
     private static final String LOG_TAG = "Volleyball";
-    private static final double GRAV_ACC = 2.0;
-    private static final double BOUND_ACC = 20.0;
+    private static final double GRAV_ACC = 3.0;
+    private static final double BOUND_ACC = 60.0;
     private static final double START_SPEED = 5.0;
     private static final double BOUND_ACC_Y = 65.0;
+    private static final double BOUND_ACC_ATTACK = 130.0;
     private int x;
     private int y;
     private int centerX;
@@ -71,12 +72,34 @@ public class Volleyball {
         speedY = -1 * BOUND_ACC_Y * sintheta;
     }
 
+    public void updateSpeed(int ox, int oy, boolean isAttacking) {
+        // Update speedX
+        int mx = this.centerX;
+        int my = this.centerY;
+
+        double costheta =
+                ((-1*ox) * (mx-ox) + 0) / (Math.sqrt((mx-ox)*(mx-ox) + (my-oy)*(my-oy)) * ox);
+        double sintheta = Math.sqrt(1.0 - (costheta*costheta));
+
+
+        if (isAttacking) {
+            speedX = -1 * BOUND_ACC_ATTACK * costheta;
+            // Update speedY
+            speedY = -1 * BOUND_ACC_ATTACK * sintheta;
+        }
+        else {
+            speedX = -1 * BOUND_ACC_Y * costheta;
+            // Update speedY
+            speedY = -1 * BOUND_ACC_Y * sintheta;
+        }
+    }
+
     public void boundVertically() {
-        speedY = -speedY;
+        speedY = speedY > 0 ? -1 * BOUND_ACC : BOUND_ACC;
     }
 
     public void boundHorizontally(){
-        speedX = -speedX;
+        speedX = speedX > 0 ? -1 * BOUND_ACC : BOUND_ACC;
     }
 
     public void setPosition(int x, int y) {

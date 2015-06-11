@@ -61,6 +61,10 @@ public class LoadingScreen extends Screen {
         Assets.cJumpB = g.newImage("enemyJump.png", Graphics.ImageFormat.ARGB4444);
         Assets.cJumpBM = g.newImage("enemyJump1.5.png", Graphics.ImageFormat.ARGB4444);
         Assets.cJumpBB = g.newImage("enemyJump1.png", Graphics.ImageFormat.ARGB4444);
+        Assets.cAttackA = g.newImage("meAttack.png", Graphics.ImageFormat.ARGB4444);
+        Assets.cAttackAA = g.newImage("meAttack1.png", Graphics.ImageFormat.ARGB4444);
+        Assets.cAttackB = g.newImage("enemyAttack.png", Graphics.ImageFormat.ARGB4444);
+        Assets.cAttackBB = g.newImage("enemyAttack1.png", Graphics.ImageFormat.ARGB4444);
 
         // set volleyball image
         Assets.volleyballImage = g.newImage("volleyball.png", Graphics.ImageFormat.ARGB4444);
