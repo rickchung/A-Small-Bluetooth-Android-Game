@@ -6,6 +6,9 @@ package com.wanlin.androidgame.pikachuvolleyball;
 public class Volleyball {
     private static final String LOG_TAG = "Volleyball";
     private static final double GRAV_ACC = 2.0;
+    private static final double BOUND_ACC = 20.0;
+    private static final double START_SPEED = 5.0;
+    private static final double BOUND_ACC_Y = 65.0;
     private int x;
     private int y;
     private int centerX;
@@ -27,8 +30,9 @@ public class Volleyball {
         this.halfHeight = height/2;
         this.centerX = this.x + halfWidth;
         this.centerY = this.y + halfHeight;
-        this.speedX = 5.0; // 5.0 for test
-        this.speedY = 5.0;
+        this.speedX = START_SPEED;
+        this.speedY = START_SPEED;
+        this.radius = halfWidth;
     }
 
     /**
@@ -52,9 +56,17 @@ public class Volleyball {
         return ( distance <= this.radius + radius );
     }
 
-    public void updateSpeed(int x, int y, int speedX, int speedY) {
-//        this.speedY = this.speedY * -1 + speedY;
-//        this.speedX = this.speedX * -1 + speedX;
+    public void updateSpeed(int ox, int oy) {
+        // Update speedX
+        int mx = this.centerX;
+        int my = this.centerY;
+
+        double costheta =
+                ((-1*ox) * (mx-ox) + 0) / (Math.sqrt((mx-ox)*(mx-ox) + (my-oy)*(my-oy)) * ox);
+        speedX = -1 * BOUND_ACC_Y * costheta;
+
+        // Update speedY
+        speedY = -1 * BOUND_ACC_Y;
     }
 
     public void boundVertically() {
@@ -128,5 +140,37 @@ public class Volleyball {
 
     public void setRadius(int radius) {
         this.radius = radius;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public int getHalfWidth() {
+        return halfWidth;
+    }
+
+    public void setHalfWidth(int halfWidth) {
+        this.halfWidth = halfWidth;
+    }
+
+    public int getHalfHeight() {
+        return halfHeight;
+    }
+
+    public void setHalfHeight(int halfHeight) {
+        this.halfHeight = halfHeight;
     }
 }

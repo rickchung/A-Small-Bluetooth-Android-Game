@@ -7,8 +7,8 @@ import android.graphics.Point;
  */
 public class Pikachu {
     final String LOG_TAG = "Pikachu";
-    float JUMP_SPEED = -60.0f;
-    float MOVE_SPEED = 5.0f;
+    float JUMP_SPEED = -40.0f;
+    float MOVE_SPEED = 12.0f;
 
     private final int PAUSE = 0;
     private final int MOVE_LEFT = 1;
@@ -42,13 +42,15 @@ public class Pikachu {
         screenDensityRatioX = sizePoint.x / NUM_MOVING_SLOTS;
         screenDensityRatioY = sizePoint.y / NUM_MOVING_SLOTS;
         jumped = false;
-        radius = 0;
-        centerY = centerX = 0;
 
         this.width = width;
         this.height = height;
         this.halfwidth = width/2;
         this.halfheight = height/2;
+
+        radius = halfwidth;
+        centerX = this.x + halfwidth;
+        centerY = this.y + halfheight;
     }
 
     public void update() {
