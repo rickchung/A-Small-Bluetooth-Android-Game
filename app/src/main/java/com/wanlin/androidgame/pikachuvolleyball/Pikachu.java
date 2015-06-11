@@ -31,21 +31,24 @@ public class Pikachu {
     private int jumpStartY;
     private float screenDensityRatioX;
     private float screenDensityRatioY;
-    private int selfBound;
-    private int middleBound;
     private int radius;
+    private int width, halfwidth;
+    private int height, halfheight;
 
 
-    Pikachu(int x, int y, Point sizePoint, int selfBound, int middleBlound) {
+    Pikachu(int x, int y, Point sizePoint, int width, int height) {
         this.x = x;
         this.y = y;
         screenDensityRatioX = sizePoint.x / NUM_MOVING_SLOTS;
         screenDensityRatioY = sizePoint.y / NUM_MOVING_SLOTS;
-        this.selfBound = selfBound;
-        this.middleBound = middleBlound;
         jumped = false;
         radius = 0;
         centerY = centerX = 0;
+
+        this.width = width;
+        this.height = height;
+        this.halfwidth = width/2;
+        this.halfheight = height/2;
     }
 
     public void update() {
@@ -200,6 +203,9 @@ public class Pikachu {
         if (isJumped) {
             jumpStartY = this.y;
         }
+        // Update centerXY
+        this.centerX = this.x + halfwidth;
+        this.centerY = this.y + halfheight;
     }
 
     public void handleAction(final int action) {

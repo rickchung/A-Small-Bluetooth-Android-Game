@@ -3,6 +3,7 @@ package com.wanlin.androidgame.pikachuvolleyball;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.util.Log;
 
 import com.kilobolt.framework.Game;
 import com.kilobolt.framework.Graphics;
@@ -67,6 +68,7 @@ public class GameScreen extends Screen {
     private int volleyballAddSpeed;
     private int windAcc = 1;
 
+
     public GameScreen(Game game) {
         super(game);
         this.game = game;
@@ -80,7 +82,7 @@ public class GameScreen extends Screen {
         screenWidth = screenSizePoint.x;
         screenHeight = screenSizePoint.y;
 
-        // Density
+        // Screen Density
         densityRatio = ((PikachuVolleyball) game).getResources().getDisplayMetrics().density;
 
         // Initialize game objects here
@@ -99,11 +101,9 @@ public class GameScreen extends Screen {
         volleyballImg = Assets.volleyballImage;
 
         // Init test volleyball
-        volleyball = new Volleyball(0, 0);
+        volleyball = new Volleyball(0, 0, volleyballImg.getWidth(), volleyballImg.getHeight());
         // volleyball.setRadius(volleyballImg.getWidth()/2);
         volleyball.setRadius(100);
-        volleyball.setCenterX(volleyball.getX() + volleyball.getRadius());
-        volleyball.setCenterY(volleyball.getY() + volleyball.getRadius());
 
         if (((PikachuVolleyball) game).isHost()) {
             // I'm at the right
@@ -115,19 +115,17 @@ public class GameScreen extends Screen {
             me = new Pikachu(
                     screenWidth / 2 + 400,
                     screenHeight - characterA.getHeight() - 130, screenSizePoint,
-                    ME_BOUNDARY, MIDDLE_BOUNDARY);
+                    characterA.getWidth(), characterA.getHeight());
             enemy = new Pikachu(
                     screenWidth / 2 - 400 - characterB.getWidth(),
                     screenHeight - characterB.getHeight() - 130, screenSizePoint,
-                    ENEMY_BOUNDARY, MIDDLE_BOUNDARY);
+                    characterB.getWidth(), characterB.getHeight());
 
             volleyballAddSpeed = -10;
 
             // Set radius
-            // me.setRadius(characterA.getHeight()/2);
-            // enemy.setRadius(characterB.getHeight()/2);
-            me.setRadius(0);
-            enemy.setRadius(0);
+             me.setRadius(characterA.getWidth()/2);
+             enemy.setRadius(characterB.getWidth()/2);
 
             // Set center X and Y
             me.setCenterX(me.getX() + characterA.getWidth()/2);
@@ -171,19 +169,17 @@ public class GameScreen extends Screen {
             me = new Pikachu(
                     screenWidth / 2 - 400 - characterB.getWidth(),
                     screenHeight - characterB.getHeight() - 130, screenSizePoint,
-                    ME_BOUNDARY, MIDDLE_BOUNDARY);
+                    characterB.getWidth(), characterB.getHeight());
             enemy = new Pikachu(
                     screenWidth / 2 + 400,
                     screenHeight - characterA.getHeight() - 130, screenSizePoint,
-                    ENEMY_BOUNDARY, MIDDLE_BOUNDARY);
+                    characterA.getWidth(), characterA.getHeight());
 
             volleyballAddSpeed = 10;
 
             // Set radius
-            // me.setRadius(characterB.getHeight() / 2);
-            // enemy.setRadius(characterA.getHeight() / 2);
-            me.setRadius(0);
-            enemy.setRadius(0);
+            me.setRadius(characterB.getWidth() / 2);
+            enemy.setRadius(characterA.getWidth() / 2);
 
             // Set center X and Y
             me.setCenterX(me.getX() + characterB.getWidth()/2);
@@ -215,6 +211,12 @@ public class GameScreen extends Screen {
                 enemyJumpAnim.addFrame(i, ANI_RATE);
             }
         }
+
+        Log.e(LOG_TAG, String.format("Me prop: r=%d, centerX=%d, centerY=%d",
+                me.getRadius(), me.getCenterX(), me.getCenterY()));
+        Log.e(LOG_TAG, String.format("Enemy prop: r=%d, centerX=%d, centerY=%d",
+                enemy.getRadius(), enemy.getCenterX(), enemy.getCenterY()));
+
 
         GROUND_BOUNDARY = screenHeight - 200;
 
@@ -276,6 +278,11 @@ public class GameScreen extends Screen {
 
                 // Pause
                 if (inBounds(event, 0, 0, 400, 200)) {
+                    // Check volleyball positin
+                    Log.e(LOG_TAG, String.format(
+                            "VB: centerX=%d, centerY=%d",
+                            volleyball.getCenterX(), volleyball.getCenterY()
+                    ));
                     if (isMoving) {
                         isMoving = false;
                         me.handleAction(STOP_LEFT);
@@ -345,25 +352,14 @@ public class GameScreen extends Screen {
         }
 
         // Chece if volleyball collides with Pikachu
-//        if (volleyball.detectCollision(me.getCenterX(), me.getCenterY(), me.getRadius())) {
-//            volleyball.updateSpeed(
-//                    me.getCenterX(), me.getCenterY(), volleyballAddSpeed, 0);
-//        }
-//        if (volleyball.detectCollision(enemy.getCenterX(), enemy.getCenterY(), enemy.getRadius())) {
-//            volleyball.updateSpeed(
-//                    enemy.getCenterX(), enemy.getCenterY(), -1*volleyballAddSpeed, 0);
-//        }
-
-//        if (volleyball.detectCollision(me.getX(), me.getY(), me.getRadius())) {
-//            //Log.e(LOG_TAG, "Me collision detected");
-//            volleyball.updateSpeed(
-//                    me.getX(), me.getY(), volleyballAddSpeed, 0);
-//        }
-//        if (volleyball.detectCollision(enemy.getX(), enemy.getY(), enemy.getRadius())) {
-//            //Log.e(LOG_TAG, "Enemy collision detected");
-//            volleyball.updateSpeed(
-//                    enemy.getX(), enemy.getY(), -1 * volleyballAddSpeed, 0);
-//        }
+        if (volleyball.detectCollision(me.getCenterX(), me.getCenterY(), me.getRadius())) {
+            volleyball.updateSpeed(
+                    me.getCenterX(), me.getCenterY(), volleyballAddSpeed, 0);
+        }
+        if (volleyball.detectCollision(enemy.getCenterX(), enemy.getCenterY(), enemy.getRadius())) {
+            volleyball.updateSpeed(
+                    enemy.getCenterX(), enemy.getCenterY(), -1*volleyballAddSpeed, 0);
+        }
 
         // check score
         if (score == targetScore) {
@@ -394,6 +390,7 @@ public class GameScreen extends Screen {
             currentSpriteA = meJumpAnim.getImage();
         else
             currentSpriteA = meAnim.getImage();
+
         // Enemy update
         enemy.update();
         if (!enemy.isOnTheGround())
@@ -409,7 +406,7 @@ public class GameScreen extends Screen {
                 String.format("%d %d %s", me.getX(), me.getY(), String.valueOf(triggerJump) )
         ));
 
-        // Send volleyball position
+        // Send volleyball position (host only)
         if (((PikachuVolleyball)game).isHost()) {
             // Volleyball update
             volleyball.update();
@@ -493,6 +490,9 @@ public class GameScreen extends Screen {
         g.drawImage(currentSpriteB, enemy.getX(), enemy.getY());
         g.drawString("Pause", 200, 100, paint);
         g.drawImage(volleyballImg, volleyball.getX(), volleyball.getY());
+        g.drawRect(volleyball.getCenterX(), volleyball.getCenterY(), 20, 20, Color.BLUE);
+        g.drawRect(me.getCenterX(), me.getCenterY(), 20, 20, Color.RED);
+        g.drawRect(enemy.getCenterX(), enemy.getCenterY(), 20, 20, Color.RED);
     }
 
     private void drawPausedUI() {
@@ -538,8 +538,13 @@ public class GameScreen extends Screen {
             me.handleAction(PAUSE);
             enemy.handleAction(PAUSE);
             state = GameState.Paused;
-            if (Assets.playingBgm.isPlaying())
-                Assets.playingBgm.dispose();
+            try {
+                if (Assets.playingBgm.isPlaying()) {
+                    Assets.playingBgm.stop();
+                    Assets.playingBgm.dispose();
+                }
+            }
+            catch (Exception e) { }
         }
     }
 

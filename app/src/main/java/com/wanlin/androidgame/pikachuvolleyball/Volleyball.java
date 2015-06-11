@@ -1,7 +1,5 @@
 package com.wanlin.androidgame.pikachuvolleyball;
 
-import android.util.Log;
-
 /**
  * Created by rickchung on 6/9/15.
  */
@@ -14,13 +12,21 @@ public class Volleyball {
     private int centerY;
     private int width;
     private int height;
+    private int halfWidth;
+    private int halfHeight;
     private int radius;
     private double speedX;
     private double speedY;
 
-    Volleyball(int x, int y) {
+    Volleyball(int x, int y, int width, int height) {
         this.x = x;
         this.y = y;
+        this.width = width;
+        this.height= height;
+        this.halfWidth  = width/2;
+        this.halfHeight = height/2;
+        this.centerX = this.x + halfWidth;
+        this.centerY = this.y + halfHeight;
         this.speedX = 5.0; // 5.0 for test
         this.speedY = 5.0;
     }
@@ -32,8 +38,8 @@ public class Volleyball {
         // Update the current position
         x += speedX;
         y += speedY;
-        centerX += speedX;
-        centerY += speedY;
+        centerX = x+halfWidth;
+        centerY = y+halfHeight;
         // Update speedY with gravitational acceleration
         speedY += GRAV_ACC;
     }
@@ -42,14 +48,13 @@ public class Volleyball {
         int dx = this.centerX - x;
         int dy = this.centerY - y;
         double distance = Math.sqrt(dx*dx + dy*dy);
-        Log.d(LOG_TAG, String.format("D=%f, r=%d", distance, this.radius));
 
         return ( distance <= this.radius + radius );
     }
 
     public void updateSpeed(int x, int y, int speedX, int speedY) {
-        this.speedY = this.speedY * -1 + speedY;
-        this.speedX = this.speedX * -1 + speedX;
+//        this.speedY = this.speedY * -1 + speedY;
+//        this.speedX = this.speedX * -1 + speedX;
     }
 
     public void boundVertically() {
@@ -63,6 +68,9 @@ public class Volleyball {
     public void setPosition(int x, int y) {
         this.x = x;
         this.y = y;
+        // update centerXY
+        this.centerX = x + halfWidth;
+        this.centerY = y + halfHeight;
     }
 
     /*========== Getters And Setters ==========*/
