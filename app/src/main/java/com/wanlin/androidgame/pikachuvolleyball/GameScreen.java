@@ -18,18 +18,19 @@ import java.util.List;
  * Created by wanlin on 15/6/4.
  */
 public class GameScreen extends Screen {
-    enum GameState {
-        Ready, Running, Paused, GameOver
-    }
-
+    public static final int PAUSE_GAME = 0;
+    public static final int YOU_GOOD_TO_GO = 312849;
+    public static final int START_THAT_FUKING_GAMEEEE = 12345;
+    public static final String SCREEN_SIZE_KEY = "screensizekey";
+    public static final String VOLLEYBALL_MSG = "volleyball_msg";
+    public static final int YOU_ARE_LOSE = 938495;
+    public static final String SCORE_SYNC = "score_sync";
     private static final String LOG_TAG = "GameScreen";
-
-    GameState state = GameState.Ready;
-    private Pikachu me, enemy;
-    private Volleyball volleyball;
-    private Image characterA, characterB, characterAA, characterBB, characterBM, characterAM,
-            volleyballImg, attackedBallImg, currentSpriteA, currentSpriteB, cWin, cDead;
-    private Image cJumpA, cJumpAM, cJumpAA, cJumpB, cJumpBM, cJumpBB, cAttackA, cAttackAA, cAttackB, cAttackBB;
+    private static final int ATTACK_DURATION_BOUND = 20;
+    public static int MIDDLE_BOUNDARY;
+    public static int ME_BOUNDARY;
+    public static int ENEMY_BOUNDARY;
+    public static int GROUND_BOUNDARY;
     private static int screenWidth;
     private static int halfScreenwidth;
     private static int screenHeight;
@@ -37,18 +38,8 @@ public class GameScreen extends Screen {
     private static int otherScreenWidth;
     private static int otherScreenHeight;
     private static boolean otherSizeIsSet;
-    public static int MIDDLE_BOUNDARY;
-    public static int ME_BOUNDARY;
-    public static int ENEMY_BOUNDARY;
-    public static int GROUND_BOUNDARY;
-    private Animation meAnim, meJumpAnim, meAttackAnim;
-    private Animation enemyAnim, enemyJumpAnim, enemyAttackAnim;
-    private int score = 0;
-
-    public static final int PAUSE_GAME = 0;
-    public static final int YOU_GOOD_TO_GO = 312849;
-    public static final int START_THAT_FUKING_GAMEEEE = 12345;
-    public static final String SCREEN_SIZE_KEY = "screensizekey";
+    private static int boundX;
+    private static int boundY;
     public final int MOVE_LEFT = 1;
     public final int MOVE_RIGHT = 2;
     public final int STOP_LEFT = 3;
@@ -56,12 +47,20 @@ public class GameScreen extends Screen {
     public final int STOP_BOTH = 123;
     public final int PAUSE = 10;
     public final int JUMP = 5;
-    public static final String VOLLEYBALL_MSG = "volleyball_msg";
-    public static final int YOU_ARE_LOSE = 938495;
-    public static final String SCORE_SYNC = "score_sync";
+    private final int ANI_RATE = 150;
+    GameState state = GameState.Ready;
+    Paint paint;
+    float densityRatio;
+    private Pikachu me, enemy;
+    private Volleyball volleyball;
+    private Image characterA, characterB, characterAA, characterBB, characterBM, characterAM,
+            volleyballImg, attackedBallImg, currentSpriteA, currentSpriteB, cWin, cDead;
+    private Image cJumpA, cJumpAM, cJumpAA, cJumpB, cJumpBM, cJumpBB, cAttackA, cAttackAA, cAttackB, cAttackBB;
+    private Animation meAnim, meJumpAnim, meAttackAnim;
+    private Animation enemyAnim, enemyJumpAnim, enemyAttackAnim;
+    private int score = 0;
     private boolean isMoving = false;
     private boolean isHolding = false;
-    private final int ANI_RATE = 150;
     private int touchDownY;
     private boolean musicIsPlaying = false;
     private BluetoothModule bluetoothModule;
@@ -70,21 +69,12 @@ public class GameScreen extends Screen {
     private int targetScore = 15;
     private int myscore;
     private int enemyscore;
-    Paint paint;
-    float densityRatio;
-
     private int volleyballAddSpeed;
     private int windAcc = 1;
-
-    private static int boundX;
-    private static int boundY;
-
     private boolean isAttacking;
     private boolean iAmAttacking;
     private boolean enemyIsAttacking;
     private int attackDuration;
-    private static final int ATTACK_DURATION_BOUND = 20;
-
 
     public GameScreen(Game game) {
         super(game);
@@ -197,8 +187,7 @@ public class GameScreen extends Screen {
             for (Image i : enAttackFrames) {
                 enemyAttackAnim.addFrame(i, ANI_RATE);
             }
-        }
-        else {
+        } else {
             // I'm at the left
             // Set bound
             ME_BOUNDARY = 0;
@@ -320,7 +309,7 @@ public class GameScreen extends Screen {
         }
 
         if (isMoving) {
-            if (((PikachuVolleyball)game).isHost()) {
+            if (((PikachuVolleyball) game).isHost()) {
                 if (me.getX() < MIDDLE_BOUNDARY + Assets.stickImage.getWidth()) {
                     isMoving = false;
                     me.handleAction(STOP_LEFT);
@@ -328,8 +317,7 @@ public class GameScreen extends Screen {
                     me.handleAction(STOP_RIGHT);
                     bluetoothModule.sendMessage(String.valueOf(STOP_RIGHT));
                 }
-            }
-            else {
+            } else {
                 if (me.getX() + me.getWidth() > MIDDLE_BOUNDARY) {
                     isMoving = false;
                     me.handleAction(STOP_LEFT);
@@ -367,20 +355,22 @@ public class GameScreen extends Screen {
                     pause();
                 }
                 // Movd left
-                if (inBounds(event, 0, pauseHeight, screenWidth / 2, screenHeight - pauseHeight)) {
+                if (inBounds(event, 0, pauseHeight, screenWidth / 4, screenHeight - pauseHeight)) {
+//              if (inBounds(event, 0, pauseHeight, screenWidth / 2, screenHeight - pauseHeight)) {
                     // Move left
                     me.handleAction(MOVE_LEFT);
                     isMoving = true;
                 }
                 // Move right
-                else if (inBounds(event, screenWidth / 2, pauseHeight, screenWidth / 2, screenHeight - pauseHeight)) {
+                else if (inBounds(event, screenWidth / 4, pauseHeight, screenWidth / 4, screenHeight - pauseHeight)) {
+//              else if (inBounds(event, screenWidth / 2, pauseHeight, screenWidth / 2, screenHeight - pauseHeight)) {
                     // Move right
                     me.handleAction(MOVE_RIGHT);
                     isMoving = true;
                 }
 
                 // attack
-                if (me.isJumped() && inBounds(event, screenWidth-400, 0, 800, pauseHeight)) {
+                if (me.isJumped() && inBounds(event, screenWidth - 400, 0, 800, pauseHeight)) {
                     Log.e(LOG_TAG, "ATTACK!!!!");
                     iAmAttacking = true;
                     isAttacking = true;
@@ -415,23 +405,20 @@ public class GameScreen extends Screen {
             Volleyball rebound events
          */
         // Volleyball rebounds at boundaries
-        if (((PikachuVolleyball)game).isHost()) {
+        if (((PikachuVolleyball) game).isHost()) {
             if ((volleyball.getX() - volleyballImg.getWidth() / 2) < 0) {
                 volleyball.setX(1 + volleyballImg.getWidth() / 2);
                 if (volleyball.isAttacked()) {
-                    volleyball.setSpeedX( -1 * volleyball.getSpeedX() );
-                }
-                else {
+                    volleyball.setSpeedX(-1 * volleyball.getSpeedX());
+                } else {
                     volleyball.boundHorizontally();
                 }
-            }
-            else if ((volleyball.getX() + volleyballImg.getWidth() / 2) > screenWidth) {
+            } else if ((volleyball.getX() + volleyballImg.getWidth() / 2) > screenWidth) {
                 volleyball.setX(screenWidth - volleyballImg.getWidth() / 2 - 1);
 
                 if (volleyball.isAttacked()) {
-                    volleyball.setSpeedX( -1 * volleyball.getSpeedX() );
-                }
-                else {
+                    volleyball.setSpeedX(-1 * volleyball.getSpeedX());
+                } else {
                     volleyball.boundHorizontally();
                 }
             }
@@ -444,8 +431,7 @@ public class GameScreen extends Screen {
                 // Score statistic
                 if (volleyball.getX() > MIDDLE_BOUNDARY) {
                     enemyscore += 1;
-                }
-                else {
+                } else {
                     myscore += 1;
                 }
                 // Send scores to the other
@@ -456,9 +442,8 @@ public class GameScreen extends Screen {
                 volleyball.setY(1 + volleyballImg.getHeight() / 2);
 
                 if (volleyball.isAttacked()) {
-                    volleyball.setSpeedY( -1 * volleyball.getSpeedY() );
-                }
-                else {
+                    volleyball.setSpeedY(-1 * volleyball.getSpeedY());
+                } else {
                     volleyball.setSpeedY(0);
                 }
             }
@@ -471,26 +456,24 @@ public class GameScreen extends Screen {
             if (iAmAttacking) {
                 volleyball.updateSpeed(me.getCenterX(), me.getCenterY(), true);
                 volleyball.setIsAttacked(true);
-            }
-            else
+            } else
                 volleyball.updateSpeed(me.getCenterX(), me.getCenterY());
         }
         if (volleyball.detectCollision(enemy.getCenterX(), enemy.getCenterY(), enemy.getRadius())) {
             if (enemyIsAttacking) {
                 volleyball.updateSpeed(enemy.getCenterX(), enemy.getCenterY(), true);
                 volleyball.setIsAttacked(true);
-            }
-            else
+            } else
                 volleyball.updateSpeed(enemy.getCenterX(), enemy.getCenterY());
         }
         if (volleyball.detectCollision(boundX, boundY, 50)) {
             volleyball.updateSpeed(boundX, boundY, 0.8);
         }
-        if (volleyball.detectCollision(boundX, boundY+50, 50)) {
-            volleyball.updateSpeed(boundX, boundY+50, 0.8);
+        if (volleyball.detectCollision(boundX, boundY + 50, 50)) {
+            volleyball.updateSpeed(boundX, boundY + 50, 0.8);
         }
-        if (volleyball.detectCollision(boundX, boundY+150, 50)) {
-            volleyball.updateSpeed(boundX, boundY+150, 0.8);
+        if (volleyball.detectCollision(boundX, boundY + 150, 50)) {
+            volleyball.updateSpeed(boundX, boundY + 150, 0.8);
         }
 
 
@@ -506,7 +489,7 @@ public class GameScreen extends Screen {
         /*
             Bonus music
          */
-        if (Math.abs(me.getX()-enemy.getX()) < me.getWidth()) {
+        if (Math.abs(me.getX() - enemy.getX()) < me.getWidth()) {
             bluetoothModule.sendMessage(String.valueOf(YOU_ARE_LOSE));
             isWin = true;
             endGame();
@@ -556,11 +539,11 @@ public class GameScreen extends Screen {
          */
         // Send me position
         bluetoothModule.sendMessage(String.valueOf(
-                String.format("%d %d %s", me.getX(), me.getY(), String.valueOf(triggerJump) )
+                String.format("%d %d %s", me.getX(), me.getY(), String.valueOf(triggerJump))
         ));
 
         // Send volleyball position (host only)
-        if (((PikachuVolleyball)game).isHost()) {
+        if (((PikachuVolleyball) game).isHost()) {
             // Volleyball update
             if (volleyball.isAttacked()) volleyball.update(true);
             else volleyball.update();
@@ -647,11 +630,10 @@ public class GameScreen extends Screen {
 
         if (volleyball.isAttacked()) {
             g.drawImage(attackedBallImg, volleyball.getX(), volleyball.getY());
-        }
-        else {
+        } else {
             g.drawImage(volleyballImg, volleyball.getX(), volleyball.getY());
         }
-        if (((PikachuVolleyball)game).isHost())
+        if (((PikachuVolleyball) game).isHost())
             g.drawString(String.format("%d | %d", enemyscore, myscore),
                     halfScreenwidth, 100, paint);
         else {
@@ -674,8 +656,7 @@ public class GameScreen extends Screen {
             g.drawImage(Assets.gameoverImage, 0, 0);
             g.drawImage(Assets.cWin, me.getX(), screenHeight - Assets.cWin.getHeight() - 130);
             g.drawImage(Assets.cDead, enemy.getX(), screenHeight - Assets.cDead.getHeight() - 130);
-        }
-        else
+        } else
             g.drawImage(Assets.loserImage, 0, 0);
 
     }
@@ -707,8 +688,8 @@ public class GameScreen extends Screen {
             state = GameState.Paused;
             try {
                 Assets.playingBgm.pause();
+            } catch (Exception e) {
             }
-            catch (Exception e) { }
         }
     }
 
@@ -767,17 +748,20 @@ public class GameScreen extends Screen {
         otherScreenHeight = height;
         if (screenWidth > otherScreenWidth) {
             MIDDLE_BOUNDARY = otherScreenWidth / 2;
-        }
-        else {
+        } else {
             MIDDLE_BOUNDARY = screenWidth / 2;
         }
         Log.e(LOG_TAG, "MIDDLE_BOUNDARY = " + MIDDLE_BOUNDARY);
         boundX = MIDDLE_BOUNDARY;
-        boundY = me.getY()+me.getHeight()-Assets.stickImage.getHeight();
+        boundY = me.getY() + me.getHeight() - Assets.stickImage.getHeight();
     }
 
     public void setScores(int myscore, int enemyscore) {
         this.myscore = myscore;
         this.enemyscore = enemyscore;
+    }
+
+    enum GameState {
+        Ready, Running, Paused, GameOver
     }
 }
