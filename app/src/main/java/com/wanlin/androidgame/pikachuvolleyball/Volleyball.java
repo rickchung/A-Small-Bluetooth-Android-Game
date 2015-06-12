@@ -53,6 +53,16 @@ public class Volleyball {
         speedY += GRAV_ACC;
     }
 
+    public void update(boolean isAttacking) {
+        // Update the current position
+        x += speedX;
+        y += speedY;
+        centerX = x+halfWidth;
+        centerY = y+halfHeight;
+        // Update speedY with gravitational acceleration
+        speedY += 2*GRAV_ACC;
+    }
+
     public boolean detectCollision(int x, int y, int radius) {
         int dx = this.centerX - x;
         int dy = this.centerY - y;
@@ -102,7 +112,7 @@ public class Volleyball {
 
 
         if (isAttacking) {
-            speedX = -1 * BOUND_ACC_ATTACK_X * costheta;
+            speedX = -1 * BOUND_ACC_ATTACK_X * costheta * 2;
             // Update speedY
             speedY = -1 * BOUND_ACC_ATTACK_Y * sintheta;
         }
@@ -176,6 +186,10 @@ public class Volleyball {
 
     public void setSpeedY(double speedY) {
         this.speedY = speedY;
+    }
+
+    public double getSpeed() {
+        return Math.sqrt(speedX*speedX + speedY*speedY);
     }
 
     public int getRadius() {

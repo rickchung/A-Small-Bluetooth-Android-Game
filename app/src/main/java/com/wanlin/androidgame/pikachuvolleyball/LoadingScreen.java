@@ -70,6 +70,7 @@ public class LoadingScreen extends Screen {
 
         // set volleyball image
         Assets.volleyballImage = g.newImage("volleyball.png", Graphics.ImageFormat.ARGB4444);
+        Assets.attackedBallImage = g.newImage("volleyball1.png", Graphics.ImageFormat.ARGB4444);
 
         // set button image
         Assets.startButton = g.newImage("start-button.png", Graphics.ImageFormat.RGB565);

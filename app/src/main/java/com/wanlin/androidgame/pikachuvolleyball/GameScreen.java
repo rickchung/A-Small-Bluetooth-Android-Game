@@ -28,7 +28,7 @@ public class GameScreen extends Screen {
     private Pikachu me, enemy;
     private Volleyball volleyball;
     private Image characterA, characterB, characterAA, characterBB, characterBM, characterAM,
-            volleyballImg, currentSpriteA, currentSpriteB, currentSpriteVolleyball;
+            volleyballImg, attackedBallImg, currentSpriteA, currentSpriteB, cWin, cDead;
     private Image cJumpA, cJumpAM, cJumpAA, cJumpB, cJumpBM, cJumpBB, cAttackA, cAttackAA, cAttackB, cAttackBB;
     private static int screenWidth;
     private static int halfScreenwidth;
@@ -80,8 +80,10 @@ public class GameScreen extends Screen {
     private static int boundY;
 
     private boolean isAttacking;
+    private boolean iAmAttacking;
+    private boolean enemyIsAttacking;
     private int attackDuration;
-    private static final int ATTACK_DURATION_BOUND = 50;
+    private static final int ATTACK_DURATION_BOUND = 20;
 
 
     public GameScreen(Game game) {
@@ -93,6 +95,8 @@ public class GameScreen extends Screen {
     private void init() {
         // Init some variables
         isAttacking = false;
+        iAmAttacking = false;
+        enemyIsAttacking = false;
         attackDuration = 0;
         Assets.shortKimisa = game.getAudio().createMusic("short_kimisa.mp3");
         Assets.playingBgm = game.getAudio().createMusic("gameBGM.mp3");
@@ -126,6 +130,9 @@ public class GameScreen extends Screen {
         cAttackB = Assets.cAttackB;
         cAttackBB = Assets.cAttackBB;
         volleyballImg = Assets.volleyballImage;
+        attackedBallImg = Assets.attackedBallImage;
+        cWin = Assets.cWin;
+        cDead = Assets.cDead;
 
         // Init score
         targetScore = 10;
@@ -306,6 +313,8 @@ public class GameScreen extends Screen {
             attackDuration += deltaTime;
             if (attackDuration >= ATTACK_DURATION_BOUND) {
                 isAttacking = false;
+                iAmAttacking = false;
+                volleyball.setIsAttacked(false);
                 attackDuration = 0;
             }
         }
@@ -373,8 +382,8 @@ public class GameScreen extends Screen {
                 // attack
                 if (me.isJumped() && inBounds(event, screenWidth-400, 0, 800, pauseHeight)) {
                     Log.e(LOG_TAG, "ATTACK!!!!");
+                    iAmAttacking = true;
                     isAttacking = true;
-                    volleyball.setIsAttacked(true);
                 }
 
                 // For jump
@@ -459,14 +468,18 @@ public class GameScreen extends Screen {
             Check if volleyball collides with a Pikachu or the middle boundary
          */
         if (volleyball.detectCollision(me.getCenterX(), me.getCenterY(), me.getRadius())) {
-            if (isAttacking)
+            if (iAmAttacking) {
                 volleyball.updateSpeed(me.getCenterX(), me.getCenterY(), true);
+                volleyball.setIsAttacked(true);
+            }
             else
                 volleyball.updateSpeed(me.getCenterX(), me.getCenterY());
         }
         if (volleyball.detectCollision(enemy.getCenterX(), enemy.getCenterY(), enemy.getRadius())) {
-            if (isAttacking)
+            if (enemyIsAttacking) {
                 volleyball.updateSpeed(enemy.getCenterX(), enemy.getCenterY(), true);
+                volleyball.setIsAttacked(true);
+            }
             else
                 volleyball.updateSpeed(enemy.getCenterX(), enemy.getCenterY());
         }
@@ -549,7 +562,8 @@ public class GameScreen extends Screen {
         // Send volleyball position (host only)
         if (((PikachuVolleyball)game).isHost()) {
             // Volleyball update
-            volleyball.update();
+            if (volleyball.isAttacked()) volleyball.update(true);
+            else volleyball.update();
 
             bluetoothModule.sendMessage(String.valueOf(
                     String.format("%d %d %s", volleyball.getX(), volleyball.getY(), VOLLEYBALL_MSG)
@@ -630,7 +644,13 @@ public class GameScreen extends Screen {
         g.drawImage(currentSpriteA, me.getX(), me.getY());
         g.drawImage(currentSpriteB, enemy.getX(), enemy.getY());
         g.drawString("Pause", 200, 100, paint);
-        g.drawImage(volleyballImg, volleyball.getX(), volleyball.getY());
+
+        if (volleyball.isAttacked()) {
+            g.drawImage(attackedBallImg, volleyball.getX(), volleyball.getY());
+        }
+        else {
+            g.drawImage(volleyballImg, volleyball.getX(), volleyball.getY());
+        }
         if (((PikachuVolleyball)game).isHost())
             g.drawString(String.format("%d | %d", enemyscore, myscore),
                     halfScreenwidth, 100, paint);
@@ -652,8 +672,8 @@ public class GameScreen extends Screen {
         Graphics g = game.getGraphics();
         if (isWin) {
             g.drawImage(Assets.gameoverImage, 0, 0);
-            g.drawImage(currentSpriteA, me.getX(), me.getY());
-            g.drawImage(currentSpriteB, enemy.getX(), enemy.getY());
+            g.drawImage(Assets.cWin, me.getX(), screenHeight - Assets.cWin.getHeight() - 130);
+            g.drawImage(Assets.cDead, enemy.getX(), screenHeight - Assets.cDead.getHeight() - 130);
         }
         else
             g.drawImage(Assets.loserImage, 0, 0);
@@ -686,10 +706,7 @@ public class GameScreen extends Screen {
             enemy.handleAction(PAUSE);
             state = GameState.Paused;
             try {
-                if (Assets.playingBgm.isPlaying()) {
-                    Assets.playingBgm.stop();
-                    Assets.playingBgm.dispose();
-                }
+                Assets.playingBgm.pause();
             }
             catch (Exception e) { }
         }
