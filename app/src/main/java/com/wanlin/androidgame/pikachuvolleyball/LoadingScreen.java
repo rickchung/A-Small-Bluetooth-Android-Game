@@ -65,6 +65,8 @@ public class LoadingScreen extends Screen {
         Assets.cAttackAA = g.newImage("meAttack1.png", Graphics.ImageFormat.ARGB4444);
         Assets.cAttackB = g.newImage("enemyAttack.png", Graphics.ImageFormat.ARGB4444);
         Assets.cAttackBB = g.newImage("enemyAttack1.png", Graphics.ImageFormat.ARGB4444);
+        Assets.cDead = g.newImage("dead.png", Graphics.ImageFormat.ARGB4444);
+        Assets.cWin = g.newImage("win.png", Graphics.ImageFormat.ARGB4444);
 
         // set volleyball image
         Assets.volleyballImage = g.newImage("volleyball.png", Graphics.ImageFormat.ARGB4444);
